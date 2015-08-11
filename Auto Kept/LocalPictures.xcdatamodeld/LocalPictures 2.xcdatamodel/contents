@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14D136" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="LocalSaves" representedClassName="" syncable="YES">
+        <attribute name="savedData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uploaded" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+    </entity>
+    <entity name="LogoStorage" syncable="YES">
+        <attribute name="logo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="profile" optional="YES" attributeType="Binary" syncable="YES"/>
+    </entity>
+    <fetchRequest name="LocalValues" entity="LocalSaves" predicateString="TRUEPREDICATE"/>
+    <elements>
+        <element name="LocalSaves" positionX="-639" positionY="-18" width="135" height="73"/>
+        <element name="LogoStorage" positionX="-720" positionY="263" width="128" height="73"/>
+    </elements>
+</model>

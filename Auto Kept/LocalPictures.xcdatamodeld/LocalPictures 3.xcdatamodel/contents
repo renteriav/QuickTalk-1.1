@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8166.2" systemVersion="14E46" minimumToolsVersion="Xcode 4.3">
+    <entity name="LocalCard" syncable="YES">
+        <attribute name="card" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cardNumber" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="LocalIncome" syncable="YES">
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="LocalSaves" representedClassName="" syncable="YES">
+        <attribute name="savedData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uploaded" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+    </entity>
+    <entity name="LocalSources" syncable="YES">
+        <attribute name="source" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="LogoStorage" syncable="YES">
+        <attribute name="logo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="profile" optional="YES" attributeType="Binary" syncable="YES"/>
+    </entity>
+    <fetchRequest name="LocalValues" entity="LocalSaves" predicateString="TRUEPREDICATE"/>
+    <elements>
+        <element name="LocalCard" positionX="-999" positionY="-18" width="128" height="73"/>
+        <element name="LocalIncome" positionX="-999" positionY="63" width="128" height="60"/>
+        <element name="LocalSaves" positionX="-639" positionY="-18" width="135" height="73"/>
+        <element name="LocalSources" positionX="-819" positionY="63" width="128" height="60"/>
+        <element name="LogoStorage" positionX="-819" positionY="-19" width="128" height="73"/>
+    </elements>
+</model>

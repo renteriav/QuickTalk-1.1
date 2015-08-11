@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" restorationIdentifier="welcomeSlide1" id="Rkx-aD-c0o">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="400"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Keep your accountant always updated and never search for lost documents again! " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="320" translatesAutoresizingMaskIntoConstraints="NO" id="GK1-OD-VAX">
+                    <rect key="frame" x="15" y="221" width="290" height="179"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No More Q/A Or Searching" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="320" translatesAutoresizingMaskIntoConstraints="NO" id="eps-Im-6S9">
+                    <rect key="frame" x="30" y="168" width="260" height="64"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="64" id="zKk-w5-4Me"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-BoldItalic" family="Helvetica Neue" pointSize="24"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="userWelcome.png" translatesAutoresizingMaskIntoConstraints="NO" id="1rS-Q0-1cI">
+                    <rect key="frame" x="132" y="100" width="56" height="43"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="56" id="LtL-J9-lCe"/>
+                        <constraint firstAttribute="height" constant="43" id="PJJ-yC-fva"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="eps-Im-6S9" firstAttribute="top" secondItem="1rS-Q0-1cI" secondAttribute="bottom" constant="25" id="4ji-0a-j9k"/>
+                <constraint firstItem="eps-Im-6S9" firstAttribute="trailing" secondItem="GK1-OD-VAX" secondAttribute="trailing" constant="-15" id="5WQ-jr-BOb"/>
+                <constraint firstItem="eps-Im-6S9" firstAttribute="centerY" secondItem="Rkx-aD-c0o" secondAttribute="centerY" id="8XC-Sl-eEl"/>
+                <constraint firstItem="GK1-OD-VAX" firstAttribute="top" secondItem="1rS-Q0-1cI" secondAttribute="bottom" constant="78" id="EhF-Ic-eA8"/>
+                <constraint firstAttribute="trailing" secondItem="GK1-OD-VAX" secondAttribute="trailing" constant="15" id="LqB-e3-Vfh"/>
+                <constraint firstItem="GK1-OD-VAX" firstAttribute="leading" secondItem="Rkx-aD-c0o" secondAttribute="leading" constant="15" id="MH0-sh-7fN"/>
+                <constraint firstAttribute="bottom" secondItem="GK1-OD-VAX" secondAttribute="bottom" id="gNj-Px-2nI"/>
+                <constraint firstItem="eps-Im-6S9" firstAttribute="leading" secondItem="GK1-OD-VAX" secondAttribute="leading" constant="15" id="nkg-Aj-WfA"/>
+                <constraint firstItem="1rS-Q0-1cI" firstAttribute="centerX" secondItem="eps-Im-6S9" secondAttribute="centerX" id="oP4-1j-s1R"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="859" y="187"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="userWelcome.png" width="391" height="283"/>
+    </resources>
+</document>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="HelveticaNeue.ttc">
+            <string>HelveticaNeue</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UIViewController">
+            <connections>
+                <outlet property="view" destination="iN0-l3-epB" id="0p1-Qi-fJH"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="Overlay">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n5L-u8-7Xu">
+                    <rect key="frame" x="157" y="597" width="60" height="60"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="60" id="zeB-XA-awh"/>
+                    </constraints>
+                    <state key="normal" backgroundImage="play.png">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="70K-ZU-zB5">
+                    <rect key="frame" x="297" y="610" width="70" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="5P8-Zl-BAE"/>
+                        <constraint firstAttribute="width" constant="70" id="An6-ob-wkf"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                    <state key="normal" title="Skip">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QcI-hN-yFW">
+                    <rect key="frame" x="8" y="597" width="120" height="62"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="120" id="ATV-YS-JQK"/>
+                        <constraint firstAttribute="height" constant="62" id="ZM6-46-Enk"/>
+                    </constraints>
+                    <state key="normal">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="accessClicked:" destination="iN0-l3-epB" eventType="touchUpInside" id="Ftw-iY-Mss"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Access  Database" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yfm-w9-NP5">
+                    <rect key="frame" x="8" y="607" width="86" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="t1m-8e-ev0"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TZS-By-m93">
+                    <rect key="frame" x="8" y="543" width="86" height="30"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <state key="normal" title="Money In">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="mInPressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="u99-H3-FoE"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="43X-FO-3lA">
+                    <rect key="frame" x="297" y="543" width="70" height="30"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <state key="normal" title="Mileage">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="mileagePressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="vbe-Qn-ahn"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A9F-rx-Mly">
+                    <rect key="frame" x="134" y="543" width="106" height="30"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <state key="normal" title="Money Out">
+                        <color key="titleColor" red="1" green="0.96707945381702309" blue="0.97401655698981759" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="mOutPressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="hCW-NV-Bs4"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="QcI-hN-yFW" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leadingMargin" id="0F4-NQ-c8l"/>
+                <constraint firstItem="TZS-By-m93" firstAttribute="leading" secondItem="Yfm-w9-NP5" secondAttribute="leading" id="326-zD-KaX"/>
+                <constraint firstAttribute="bottom" secondItem="70K-ZU-zB5" secondAttribute="bottom" constant="7" id="5y5-xO-2eW"/>
+                <constraint firstItem="43X-FO-3lA" firstAttribute="leading" secondItem="70K-ZU-zB5" secondAttribute="leading" id="BJR-TM-Gra"/>
+                <constraint firstItem="A9F-rx-Mly" firstAttribute="centerX" secondItem="n5L-u8-7Xu" secondAttribute="centerX" id="BQe-qR-cdB"/>
+                <constraint firstItem="QcI-hN-yFW" firstAttribute="bottom" secondItem="iN0-l3-epB" secondAttribute="bottomMargin" id="Lv2-Sh-x1K"/>
+                <constraint firstItem="QcI-hN-yFW" firstAttribute="top" secondItem="n5L-u8-7Xu" secondAttribute="top" id="TJp-Ve-GPS"/>
+                <constraint firstItem="Yfm-w9-NP5" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="XOC-LF-z4J"/>
+                <constraint firstItem="QcI-hN-yFW" firstAttribute="centerX" secondItem="Yfm-w9-NP5" secondAttribute="centerX" constant="17" id="ag8-PI-5F6"/>
+                <constraint firstItem="43X-FO-3lA" firstAttribute="trailing" secondItem="70K-ZU-zB5" secondAttribute="trailing" id="b8d-bU-cTd"/>
+                <constraint firstAttribute="bottom" secondItem="Yfm-w9-NP5" secondAttribute="bottom" constant="10" id="dGp-jp-7Pl"/>
+                <constraint firstItem="Yfm-w9-NP5" firstAttribute="bottom" secondItem="n5L-u8-7Xu" secondAttribute="bottom" id="iqI-QC-2lw"/>
+                <constraint firstItem="70K-ZU-zB5" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailingMargin" id="nPN-Pk-5wx"/>
+                <constraint firstItem="QcI-hN-yFW" firstAttribute="top" secondItem="TZS-By-m93" secondAttribute="bottom" constant="24" id="rfL-d5-GMZ"/>
+                <constraint firstItem="TZS-By-m93" firstAttribute="trailing" secondItem="Yfm-w9-NP5" secondAttribute="trailing" id="vPe-2v-NNq"/>
+                <constraint firstItem="A9F-rx-Mly" firstAttribute="baseline" secondItem="TZS-By-m93" secondAttribute="baseline" id="vnL-Uo-m1T"/>
+                <constraint firstItem="n5L-u8-7Xu" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="yMJ-1n-h18"/>
+                <constraint firstItem="A9F-rx-Mly" firstAttribute="baseline" secondItem="43X-FO-3lA" secondAttribute="baseline" id="yqV-eK-xBr"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <connections>
+                <outlet property="Mileage" destination="43X-FO-3lA" id="m7r-R7-Usm"/>
+                <outlet property="btncancel" destination="70K-ZU-zB5" id="nrY-9N-g8q"/>
+                <outlet property="btntake" destination="n5L-u8-7Xu" id="Eia-5v-hQB"/>
+                <outlet property="moneyIn" destination="TZS-By-m93" id="Fa8-Zn-vKA"/>
+                <outlet property="moneyOut" destination="A9F-rx-Mly" id="13r-rJ-cft"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="play.png" width="57" height="57"/>
+    </resources>
+</document>
