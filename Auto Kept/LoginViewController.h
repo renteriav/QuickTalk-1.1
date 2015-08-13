@@ -10,7 +10,7 @@
 #import "AppDelegate.h"
 #import "AKDefault.h"
 #import "HomeViewController.h"
-#import "SliderViewController.h"
+#import "TutorialViewController.h"
 
 @interface LoginViewController : UIViewController  <UITextFieldDelegate>
 

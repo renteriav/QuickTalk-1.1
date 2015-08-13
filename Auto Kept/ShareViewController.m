@@ -12,7 +12,7 @@
 #import "commonunit.h"
 #import "AppDelegate.h"
 #import "SVProgressHUD.h"
-#import "AKStyle.h"
+#import "QTStyle.h"
 
 
 @interface ShareViewController () <MFMessageComposeViewControllerDelegate, UITextFieldDelegate>
@@ -25,7 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    AKStyle *style = [[AKStyle alloc]init];
+    QTStyle *style = [[QTStyle alloc]init];
     
     CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
     

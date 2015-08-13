@@ -8,7 +8,7 @@
 
 #import "PersonalInfoFormViewController.h"
 #import "SVProgressHUD.h"
-#import "AKStyle.h"
+#import "QTStyle.h"
 
 @interface PersonalInfoFormViewController() <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
@@ -30,7 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    AKStyle *style = [[AKStyle alloc]init];
+    QTStyle *style = [[QTStyle alloc]init];
     
     CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
     

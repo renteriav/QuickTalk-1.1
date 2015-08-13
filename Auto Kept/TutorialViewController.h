@@ -1,5 +1,5 @@
 //
-//  SliderViewController.h
+//  TutorialViewController.h
 //  Auto Kept
 //
 //  Created by Nicholas Bellisario on 4/27/15.
@@ -10,6 +10,6 @@
 #import "SVProgressHUD.h"
 #import "AppDelegate.h"
 
-@interface SliderViewController : UIViewController
+@interface TutorialViewController : UIViewController
 @property(nonatomic) NSString *guid;
 @end

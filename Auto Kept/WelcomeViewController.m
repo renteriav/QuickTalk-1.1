@@ -7,7 +7,7 @@
 //
 
 #import "WelcomeViewController.h"
-#import "AKStyle.h"
+#import "QTStyle.h"
 #import "HomeViewController.h"
 
 
@@ -34,7 +34,7 @@
     // Do any additional setup after loading the view.
     
     
-    AKStyle *style = [[AKStyle alloc]init];
+    QTStyle *style = [[QTStyle alloc]init];
     CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
     
     

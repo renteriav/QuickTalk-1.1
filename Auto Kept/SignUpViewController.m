@@ -12,7 +12,7 @@
  Recover functionality navigation. controls
  */
 #import "SignUpViewController.h"
-#import "AKStyle.h"
+#import "QTStyle.h"
 #import "SVProgressHUD.h"
 #import "AKDefault.h"
 
@@ -39,7 +39,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    AKStyle *style = [[AKStyle alloc]init];
+    QTStyle *style = [[QTStyle alloc]init];
     
     CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
     

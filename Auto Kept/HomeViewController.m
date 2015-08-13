@@ -75,6 +75,10 @@
 @property (nonatomic) NSString *cateFilled;
 @property (nonatomic) NSString *companyToPFilled;
 @property (nonatomic) NSString *dateFilled;
+@property (nonatomic) NSNumber *paymentMethodId;
+@property (nonatomic) NSNumber *categoryId;
+@property (nonatomic) NSDictionary *categoryDictionary;
+@property (nonatomic) NSDictionary *methodDictionary;
 @property (nonatomic) BOOL Mileage;
 @property (nonatomic) BOOL lockSubmit;
 @property (nonatomic) BOOL Income;
@@ -134,22 +138,22 @@
     // NSLog(@"\n new dic%@",[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
     
     self.allData = [[NSMutableArray alloc] init];
-    AppDelegate *appdelegate = [[UIApplication sharedApplication] delegate];
+    //AppDelegate *appdelegate = [[UIApplication sharedApplication] delegate];
    
     //self.categoryView = [[HTAutocompleteTextField alloc] init];
-    NSArray *cards = [appdelegate getCards];
-    NSArray *methodtypes = [appdelegate getIncomeMethods];
-    if(self.login || cards.count == 0){
+    //NSArray *cards = [appdelegate getCards];
+    //NSArray *methodtypes = [appdelegate getIncomeMethods];
+    //if(self.login || cards.count == 0){
         
-        [appdelegate saveCardInfo:@"Login"];
+    //    [appdelegate saveCardInfo:@"Login"];
 
-    }
-    if(self.login || methodtypes.count == 0){
-        [appdelegate setIncomeMethod:@" Card"];
-        [appdelegate setIncomeMethod:@" Check"];
-        [appdelegate setIncomeMethod:@" Cash"];
-    }
-    self.amountView.text = @"Description";
+    //}
+    //if(self.login || methodtypes.count == 0){
+    //    [appdelegate setIncomeMethod:@" Card"];
+    //    [appdelegate setIncomeMethod:@" Check"];
+    //    [appdelegate setIncomeMethod:@" Cash"];
+    //}
+    self.amountView.text = @"";
     self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
     self.payeeView.autocompleteType = HTAutocompleteTypeComp;
     //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
@@ -163,6 +167,7 @@
     self.dateView.text = @"";
 
     
+    /*
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"show_personal_info_form"]boolValue]){
         if([self checkprofile]){
             //navigate to personal profile screen
@@ -172,7 +177,7 @@
             return;
             
         }
-    }
+    }*/
     self.Mileage = NO;
     self.lockSubmit = NO;
     self.Transa = YES;
@@ -201,12 +206,12 @@
     self.methodSet = FALSE;
     self.cateSet = FALSE;
     self.compSet = FALSE;
-    self.amountView.text = @"Amount:";
-    self.methodView.text = @"Type:";
-    self.categoryView.text = @"Category:";
+    self.amountView.text = @"";
+    self.methodView.text = @"";
+    self.categoryView.text = @"";
     self.payeeView.text = @"";
     self.txtview.text = @"Description";
-    self.dateView.text = @"Date:";
+    self.dateView.text = @"";
 
     [self.logoButton setTitle:@"" forState:UIControlStateNormal];
     [self.logoButton setImage:nil forState:UIControlStateNormal];
@@ -236,8 +241,7 @@
     self.profileimageView.clipsToBounds = TRUE;
     
     [self.logoButton.imageView setContentMode:UIViewContentModeScaleAspectFit];
-
-    
+        
     /*
     http://dragonmobile.nuancemobiledeveloper.com/public/index.php
     username: kokx85
@@ -317,12 +321,12 @@
     self.lineOne = nil;
 }
 
-#pragma get expense categories
+#pragma get expense categories and payment methods
 
 - (void)getExpenseCategories{
     
-    //NSString *strguid = [[NSUserDefaults standardUserDefaults] objectForKey:@"user_guid"];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@expense_categories",baseurl]];
+    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@expense_categories?realm_id=%@", baseurl, realm_id]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     
@@ -340,14 +344,16 @@
     
     NSMutableArray *allKeys = [[result allKeys] mutableCopy];
     
+    self.categoryDictionary = result;
     self.categoryTypes = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     NSLog(@"%@", self.categoryTypes);
+    [SVProgressHUD dismiss];
     
 }
 - (void)getpaymentMethods{
     
-    //NSString *strguid = [[NSUserDefaults standardUserDefaults] objectForKey:@"user_guid"];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@bank_accounts",baseurl]];
+    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@bank_accounts?realm_id=%@", baseurl, realm_id]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     
@@ -365,8 +371,10 @@
     
     NSMutableArray *allKeys = [[result allKeys] mutableCopy];
     
+    self.methodDictionary = result;
     self.paymentTypes = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     NSLog(@"%@", self.paymentTypes);
+    [SVProgressHUD dismiss];
     
 }
 /*
@@ -472,7 +480,7 @@
     return YES;
 }
 
-/*
+
 -(void) loadData
 {
 //   http://autokept.herokuapp.com/api/v1/brands/fetch?guid=sdfgdfhgdh
@@ -552,7 +560,7 @@
          });
      }];
 
-}*/
+}
 
 -(void) StoreAndDownloadData:(NSMutableDictionary *)dic
 {
@@ -612,6 +620,7 @@
 
         self.profileimageView.image = [commonunit GetImageFromApp:profileImage];
         [self.logoButton setImage:[commonunit GetImageFromApp:headerImage] forState:UIControlStateNormal];
+        [self.logoButton setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 304-88)];
         
         NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:userData];
         
@@ -702,15 +711,16 @@
     NSString *strdescription = [self.txtview.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if([strdescription length] == 0 || [strdescription isEqualToString:@"Description"])
     {
+        NSArray *dateComponents = [self.dateView.text componentsSeparatedByString:@"/"];
+        NSString *year = [dateComponents objectAtIndex:2];
+        NSString *month = [dateComponents objectAtIndex:0];
+        NSString *day = [dateComponents objectAtIndex:1];
+        self.dateFilled = [NSString stringWithFormat:@"%@-%@-%@", year, month, day ];
+
+        NSLog(@"string=%@", self.dateFilled);
         [SVProgressHUD showErrorWithStatus:@"Please enter description"];
         return;
     }
-//    else if(self.sendimage == nil)
-//    {
-//        [SVProgressHUD showErrorWithStatus:@"Please select image"];
-//        return;
-//    }
-    AppDelegate *appdele = [[UIApplication sharedApplication] delegate];
 
     
     NSString *base64String = @"";
@@ -719,41 +729,24 @@
         NSData *imageData = UIImageJPEGRepresentation(self.sendimage, 1);
         base64String = [[imageData base64EncodedStringWithOptions:0] stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
     }
-    if (self.Transa){
-    self.paymentMethodFilled = [[self.methodView.text componentsSeparatedByString:@":"] objectAtIndex:1];
-    }
-    if(self.Income){
-    [appdele SaveSource:self.companyToPFilled];
-    [appdele setIncomeMethod:self.paymentMethodFilled];
-    }else if(self.Transa){
-        [self cardSave];
-    }
-    NSString *strguid = [[NSUserDefaults standardUserDefaults] objectForKey:@"user_guid"];
+
+    //self.paymentMethodFilled = [[self.methodView.text componentsSeparatedByString:@":"] objectAtIndex:1];
+    self.paymentMethodFilled = self.methodView.text;
+    self.totalFilled = [[self.amountView.text stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@"," withString:@""];
+
+
     NSString *str;
-    if(self.Mileage) {
-        //&trip_time=3:30PM&trip_date=2015-07-01
-        NSArray *date = [self.dateFilled componentsSeparatedByString:@"at"];
-        NSString *day = [[date objectAtIndex:0] stringByReplacingOccurrencesOfString:@" " withString:@""];
-        //NSString *day = @"2014-05-12";
-        NSString *time =[[date objectAtIndex:1] stringByReplacingOccurrencesOfString:@" " withString:@""];
-        NSLog(@"Date:%@", day);
-        NSLog(@"Time:%@", time);
-       str = [NSString stringWithFormat:@"guid=%@&description=%@&distance=%@&transaction_type=mileage&trip_date=%@&trip_time=%@&image=%@",strguid, self.txtview.text,self.totalFilled, day, time,base64String];
-    }
-    if(self.Transa){
-    str = [NSString stringWithFormat:@"guid=%@&description=%@&amount=%@&payment_method=%@&transaction_type=%@&payee=%@&transaction_date=%@&image=%@",strguid, self.txtview.text,self.totalFilled, self.paymentMethodFilled, self.cateFilled, self.companyToPFilled, self.dateFilled,base64String];
-    }
-    if(self.Income){
-            str = [NSString stringWithFormat:@"guid=%@&description=%@&amount=%@&payment_method=%@&transaction_type=%@&payee=%@&transaction_date=%@&image=%@",strguid, self.txtview.text,self.totalFilled, self.paymentMethodFilled,self.cateFilled, self.companyToPFilled, self.dateFilled,base64String];
-    }
+
+    str = [NSString stringWithFormat:@"description=%@&amount=%@&bank_account=%@&expense_category=%@&date=%@", self.txtview.text,self.totalFilled, self.paymentMethodId, self.categoryId, self.dateFilled];
     
     self.localtemp = str;
-    //    str = [self urlencode:str];
     
     //NSLog(str);
     NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@submit",baseurl]];
+    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@create_purchase?realm_id=%@", baseurl, realm_id]];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:5];
     [request setHTTPMethod:@"POST"];
@@ -780,7 +773,7 @@
                          self.txtview.text = @"Description";
                          //[SVProgressHUD showErrorWithStatus:@"Upload Successful! Click your iPhone home button to close the app."];
                          [SVProgressHUD dismiss];
-                         UIAlertView *lastcall = [[UIAlertView alloc] initWithTitle:@"Upload Successful!" message:@"Please sign in at www.autokept.com to view your reports." delegate:self cancelButtonTitle:@"Exit App" otherButtonTitles:@"Submit Another",nil ];
+                         UIAlertView *lastcall = [[UIAlertView alloc] initWithTitle:@"Upload Successful!" message:@"Please go to your QuickBooks online to see your document." delegate:self cancelButtonTitle:@"Exit App" otherButtonTitles:@"Submit Another",nil ];
                          
                          lastcall.tag = 1;
                          self.localtemp = nil;
@@ -969,6 +962,7 @@
 {
     NSLog(@"Picha!!");
     [imagePicker takePicture];
+    /*
     switch (self.typeTran){
         case 0:
             self.Transa = NO;
@@ -983,8 +977,8 @@
             self.dateView.text = @"Date: ";
             self.amountView.text = @"Amount: ";
             self.txtview.text = @"Description";
-            self.categoryView.text = @"Category: ";
-            self.descriptiontext = @"";
+            //self.categoryView.text = @"Category: ";
+            //self.descriptiontext = @"";
             self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
             self.payeeView.autocompleteType = HTAutocompleteTypeSource;
             //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
@@ -1027,7 +1021,7 @@
             self.txtview.text = @"Description";
             self.descriptiontext = @"";
             break;
-    }
+    }*/
 }
 
 -(void) cancelImage:(id)sender
@@ -1035,6 +1029,7 @@
     [imagePicker dismissViewControllerAnimated:TRUE completion:nil];
     imagePicker = nil;
      NSLog(@"No Picha!!");
+    /*
     switch (self.typeTran){
         case 0:
             self.Transa = NO;
@@ -1093,7 +1088,7 @@
             self.descriptiontext = @"";
             self.categoryView.text = @"Category: Mileage";
             break;
-    }
+    }*/
     dispatch_async(dispatch_get_main_queue(), ^{
         [self StartButtonAction:nil];
     });
@@ -1537,7 +1532,7 @@
     }
 
     if (!dateset && !timeset && [self.dateFilled isEqualToString:@""] ){
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
          self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
     }else if(!dateset && timeset){
     
@@ -1574,7 +1569,7 @@
         NSDate *date = [calendar dateFromComponents:components];
         
 
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:date]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:date]];
         self.dateFilled = [DateFormatter stringFromDate:date];
     }else if(dateset && !timeset){
         NSString *tempdate = [self.dateView.text stringByReplacingOccurrencesOfString:@"Date: " withString:@""];
@@ -1602,12 +1597,12 @@
         }
         
         NSDate *date = [calendar dateFromComponents:components];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:date]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:date]];
         self.dateFilled = [DateFormatter stringFromDate:date];
 
     }else if(dateset && timeset){
         NSDate *date = [calendar dateFromComponents:components];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:date]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:date]];
         self.dateFilled = [DateFormatter stringFromDate:date];
     }
 
@@ -1658,7 +1653,7 @@
             self.categoryView.text =[NSString stringWithFormat:@"Category: %@", cate];
             self.cateSet = TRUE;
             self.cateFilled = [cate capitalizedString];
-            self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+            self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
             [DateFormatter setDateFormat:@"yyyy-MM-dd"];
             self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
             
@@ -1726,7 +1721,7 @@
     if ([[values lowercaseString] rangeOfString:@"today"].location !=NSNotFound  && [values length] != 0){
         
         self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         self.lockSubmit = NO;
         self.payeeView.userInteractionEnabled = YES;
         self.categoryView.userInteractionEnabled = YES;
@@ -1735,7 +1730,7 @@
     }
     if ([[values lowercaseString] rangeOfString:@"yesterday"].location !=NSNotFound  && [values length] != 0){
         self.dateFilled = [DateFormatter stringFromDate:[[NSDate date] dateByAddingTimeInterval: -86400.0]];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[[NSDate date] dateByAddingTimeInterval: -86400.0]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[[NSDate date] dateByAddingTimeInterval: -86400.0]]];
         self.lockSubmit = NO;
         self.payeeView.userInteractionEnabled = YES;
         self.categoryView.userInteractionEnabled = YES;
@@ -1768,7 +1763,7 @@
                     [components setYear:[yearString integerValue]];
                 }
                 NSDate *date = [calendar dateFromComponents:components];
-                self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:date]];
+                self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:date]];
                 [DateFormatter setDateFormat:@"yyyy-MM-dd"];
                 self.dateFilled = [DateFormatter stringFromDate:date];
                 dateset = true;
@@ -1798,14 +1793,14 @@
     
     
     if (!dateset && [self.dateFilled isEqualToString:@""]){
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         [DateFormatter setDateFormat:@"yyyy-MM-dd"];
         self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
         
     }
     
     if(!self.amountset){
-        self.amountView.text = [NSString stringWithFormat:@"Amount: %@",[[total stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@"," withString:@"" ]] ;
+        self.amountView.text = [NSString stringWithFormat:@"%@",[[total stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@"," withString:@"" ]] ;
         [self amountedit:self];
         self.totalFilled = [[total stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@"," withString:@""];
         
@@ -1817,7 +1812,7 @@
     }
     if (!self.methodSet){
         
-        self.methodView.text =[NSString stringWithFormat:@"Method: %@",[method capitalizedString]];
+        self.methodView.text =[NSString stringWithFormat:@"%@",[method capitalizedString]];
         self.paymentMethodFilled = [method capitalizedString];
         self.methodSet = TRUE;
     }
@@ -1875,7 +1870,7 @@
             self.categoryView.text =[NSString stringWithFormat:@"Category: %@", cate];
             self.cateSet = TRUE;
             self.cateFilled = [cate capitalizedString];
-            self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+            self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
             [DateFormatter setDateFormat:@"yyyy-MM-dd"];
             self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
             
@@ -1888,22 +1883,22 @@
     BOOL valid;
     
         if (!self.amountset){
-            self.amountView.text = @"Amount: ";
+            self.amountView.text = @"";
         }
         if (!self.methodSet){
-            self.methodView.text = @"Method: ";
+            self.methodView.text = @"";
         }
         if (!self.compSet){
-            self.payeeView.text = @"Payee: ";
+            self.payeeView.text = @"";
         }
         if (!self.cateSet){
-            self.categoryView.text = @"Category: ";
+            self.categoryView.text = @"";
         }
       BOOL dateset = false;
 
     if ([[values lowercaseString] rangeOfString:@"today"].location !=NSNotFound && [values length] != 0){
    
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         self.lockSubmit = NO;
         self.payeeView.userInteractionEnabled = YES;
         self.categoryView.userInteractionEnabled = YES;
@@ -1915,7 +1910,7 @@
     if ([[values lowercaseString] rangeOfString:@"yesterday"].location !=NSNotFound && [values length] != 0){
         
       
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[[NSDate date] dateByAddingTimeInterval: -86400.0]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[[NSDate date] dateByAddingTimeInterval: -86400.0]]];
         self.lockSubmit = NO;
         self.payeeView.userInteractionEnabled = YES;
         self.categoryView.userInteractionEnabled = YES;
@@ -1953,7 +1948,7 @@
                     [components setYear:[yearString integerValue]];
                 }
                 NSDate *date = [calendar dateFromComponents:components];
-                self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:date]];
+                self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:date]];
                 [DateFormatter setDateFormat:@"yyyy-MM-dd"];
                 self.dateFilled = [DateFormatter stringFromDate:date];
                 dateset = YES;
@@ -1965,7 +1960,7 @@
 }
     if (!dateset) {
         if ([self.dateFilled isEqualToString:@""]){
-            self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+            self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
             [DateFormatter setDateFormat:@"yyyy-MM-dd"];
             self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
         }
@@ -2034,41 +2029,36 @@
                 self.cateSet = FALSE;
                 categoryFound = true;
             }else{
-            for (NSString *categories in transactionCategorys){
-                if([categories rangeOfString:@"/"].location != NSNotFound){
-                    NSArray *temp = [categories componentsSeparatedByString:@"/"];
-                    for(NSString *temp2 in temp){
-                    if([[values lowercaseString] rangeOfString:[temp2 lowercaseString]].location != NSNotFound){
-                        cate = categories;
-                        self.cateSet = FALSE;
-                        NSLog(@"%@",cate);
-                        categoryFound = true;
-                    }
+                for (NSString *categories in transactionCategorys){
+                    if([categories rangeOfString:@"/"].location != NSNotFound){
+                        NSArray *temp = [categories componentsSeparatedByString:@"/"];
+                        for(NSString *temp2 in temp){
+                            if([[values lowercaseString] rangeOfString:[temp2 lowercaseString]].location != NSNotFound){
+                                cate = categories;
+                                self.cateSet = FALSE;
+                                //NSLog(@"%@",cate);
+                                categoryFound = true;
+                            }
                         }
-                    
-                }else{
-                   if([[values lowercaseString] rangeOfString:[categories lowercaseString]].location != NSNotFound){
-                       if([[categories lowercaseString] rangeOfString:@"money out"].location !=NSNotFound){
-                           cate = @"Money Out - I Don't Know";
-                           self.cateSet = FALSE;
-                           NSLog(@"%@",cate);
-                           categoryFound = true;
-                       }else{
-                           cate = categories;
-                           self.cateSet = FALSE;
-                           NSLog(@"%@",cate);
-                           categoryFound = true;
+                        
+                    }else{
+                       if([[values lowercaseString] rangeOfString:[categories lowercaseString]].location != NSNotFound){
+                           if([[categories lowercaseString] rangeOfString:@"money out"].location !=NSNotFound){
+                               cate = @"Money Out - I Don't Know";
+                               self.cateSet = FALSE;
+                               //NSLog(@"%@",cate);
+                               categoryFound = true;
+                           }else{
+                               cate = categories;
+                               self.cateSet = FALSE;
+                               NSLog(@"%@",cate);
+                               categoryFound = true;
+                           }
+              
                        }
-          
+                    }
                 }
-                }
-            }
-                NSArray *randomstuff = [self.categoryView.text componentsSeparatedByString:@": "];
-            if(!categoryFound && self.cateFilled == @""){
-                cate = @"Money Out - I Don't Know";
-                self.cateSet = FALSE;
-                //NSLog(@"%@",cate);
-            }
+
             }
             
     
@@ -2177,7 +2167,7 @@
             if(![amount isEqualToString:@""]){
             float value = [amount floatValue];
             total = [NSString stringWithFormat:@"%.2f", value];
-            self.amountView.text  = [NSString stringWithFormat:@"Amount: $%@", total];
+            self.amountView.text  = [NSString stringWithFormat:@"$%@", total];
             [self amountedit:self];
             self.amountset = TRUE;
             self.totalFilled = total;
@@ -2221,7 +2211,7 @@
 
 
 - (IBAction)amountedit:(id)sender {
-    NSArray *componentsString = [self.amountView.text componentsSeparatedByString:@": "];
+    /*NSArray *componentsString = [self.amountView.text componentsSeparatedByString:@": "];
     if(componentsString.count == 1){
         return;
     }
@@ -2231,10 +2221,12 @@
         [self.pickerDoneBtn setHidden:YES];
         }
         [self.amountView resignFirstResponder];
-    }else{
+    }else{*/
         NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
         [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSString *amount = [[[[componentsString objectAtIndex:1] stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""]stringByReplacingOccurrencesOfString:@"," withString:@""];
+    //NSString *amount = [[[[componentsString objectAtIndex:1] stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""]stringByReplacingOccurrencesOfString:@"," withString:@""];
+    NSString *amount = [[[self.amountView.text stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""]stringByReplacingOccurrencesOfString:@"," withString:@""];
+
     float value = [amount floatValue];
 
   
@@ -2246,7 +2238,7 @@
 
     }else{
      //   amount = [NSString stringWithFormat:@"%.2f", value];
-    self.amountView.text = [NSString stringWithFormat:@"Amount: $%.2f", value];
+    self.amountView.text = [NSString stringWithFormat:@"$%.2f", value];
         self.totalFilled = [NSString stringWithFormat:@"$%.2f", value];
     }
     [self.CategoryPicker setHidden:YES];
@@ -2254,7 +2246,6 @@
     [self.pickerDoneBtn setHidden:YES];
         }
     [self.amountView resignFirstResponder];
-    }
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
@@ -2285,6 +2276,7 @@
             
         }
     }
+    /*
     if(textField == self.amountView){
         if(self.Mileage){
             NSString *amountText = @"Mileage:";
@@ -2298,7 +2290,7 @@
             }
 
         }else{
-            NSString *amountText = @"Amount:";
+            NSString *amountText = @"";
             if (range.location > amountText.length)
             {
 
@@ -2309,7 +2301,7 @@
                 
             }
         }
-    }
+    }*/
     if(textField == self.dateView){
         
         if(!self.Mileage){
@@ -2719,18 +2711,18 @@
     NSLog(@"Got error.");
     if (self.Transa){
     if (!self.amountset){
-        self.amountView.text = @"Amount: ";
+        self.amountView.text = @"";
     }
     if (!self.methodSet){
-        self.methodView.text = @"Method: ";
+        self.methodView.text = @"";
     }
     if (!self.compSet){
-        self.payeeView.text = @"Payee: ";
+        self.payeeView.text = @"";
     }
     if (!self.cateSet){
         
         self.cateSet = TRUE;
-        self.categoryView.text = @"Category: Money Out - I Don't Know";
+        self.categoryView.text = @"";
         self.cateFilled =@"Money Out - I Don't Know";
     }
     if ([self.txtview.text isEqualToString:@""]){
@@ -2739,7 +2731,7 @@
     if ([self.dateView.text isEqualToString:@"Date: "]){
         NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
         [DateFormatter setDateFormat:@"MM/dd/yyyy"];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
     }
         self.methodView.userInteractionEnabled = YES;
@@ -2763,7 +2755,7 @@
         if ([self.dateView.text isEqualToString:@"Date: "]){
             NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
             [DateFormatter setDateFormat:@"MM/dd/yyyy 'at' hh:mm a"];
-            self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+            self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
             self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
         }
         self.methodView.userInteractionEnabled = NO;
@@ -2771,13 +2763,13 @@
     }else if(self.Income){
         
         if (!self.amountset){
-            self.amountView.text = @"Amount: ";
+            self.amountView.text = @"";
         }
         if (!self.methodSet){
-            self.methodView.text = @"Method: ";
+            self.methodView.text = @"";
         }
         if (!self.compSet){
-            self.payeeView.text = @"Source: ";
+            self.payeeView.text = @"";
         }
         if (!self.cateSet){
             self.categoryView.text = @"Category: Money In - I Don't Know";
@@ -2788,7 +2780,7 @@
         if ([self.dateView.text isEqualToString:@"Date: "]){
             NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
             [DateFormatter setDateFormat:@"MM/dd/yyyy"];
-            self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+            self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
             self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
         }
         self.methodView.userInteractionEnabled = YES;
@@ -2970,7 +2962,6 @@
         [self.payeeView resignFirstResponder];
         [self.amountView resignFirstResponder];
         [self.txtview resignFirstResponder];
-        [self.amountView resignFirstResponder];
         if(!([[self.categoryView.text componentsSeparatedByString:@":"] count] == 1)){
             for (int i=0;i<[self.categoryTypes count]; i++) {
                 NSLog(@"%@",[[self.categoryView.text componentsSeparatedByString:@":"] objectAtIndex:1] );
@@ -3110,11 +3101,15 @@
 {
     //NSLog(@"Selected Row %d", row);
     if(pickerView == self.CategoryPicker){
-        self.categoryView.text = [NSString stringWithFormat:@"Category: %@", [self.categoryTypes objectAtIndex:row]];
+        self.categoryView.text = [NSString stringWithFormat:@"%@", [self.categoryTypes objectAtIndex:row]];
+
+        self.categoryId = [self.categoryDictionary objectForKey: [NSString stringWithFormat:@"%@", [self.categoryTypes objectAtIndex:row]]];
 
     }
     else if(pickerView == self.methodPicker){
-        self.methodView.text = [NSString stringWithFormat:@"Type: %@", [self.paymentTypes objectAtIndex:row]];
+        self.methodView.text = [NSString stringWithFormat:@"%@", [self.paymentTypes objectAtIndex:row]];
+        
+        self.paymentMethodId = [self.methodDictionary objectForKey: [NSString stringWithFormat:@"%@", [self.paymentTypes objectAtIndex:row]]];
         
     }
                                        
@@ -3231,7 +3226,7 @@
 
         return;
     }
-
+    [self.methodPicker setHidden:YES];
     [self.CategoryPicker setHidden:YES];
     [self.pickerDoneBtn setHidden:YES];
     if (![self.timePicker isHidden]){
@@ -3263,12 +3258,12 @@
         self.methodView.placeholder = @"";
         self.methodView.text = @"";
         self.payeeView.text = @"";
-         self.dateView.text = @"Date: ";
+         self.dateView.text = @"";
          self.amountView.text = @"Mileage: ";
         self.txtview.text = @"Description";
         self.descriptiontext = @"";
         [DateFormatter setDateFormat:@"MM/dd/yyyy 'at' hh:mm a"];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
         self.methodView.userInteractionEnabled = NO;
         self.payeeView.userInteractionEnabled = NO;
@@ -3290,11 +3285,11 @@
             self.cateFilled =@"Money In - Earned Income";
             self.methodView.text = @"Method: ";
             self.payeeView.text = @"Source: ";
-            self.amountView.text = @"Amount: ";
+            self.amountView.text = @"";
             self.txtview.text = @"Description";
             self.descriptiontext = @"";
             [DateFormatter setDateFormat:@"MM/dd/yyyy"];
-            self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+            self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
             [DateFormatter setDateFormat:@"yyyy-MM-dd"];
             self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
             self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
@@ -3319,11 +3314,11 @@
 
         self.methodView.text = @"Method: ";
         self.payeeView.text = @"Source: ";
-        self.amountView.text = @"Amount: ";
+        self.amountView.text = @"";
         self.txtview.text = @"Description";
           self.descriptiontext = @"";
         [DateFormatter setDateFormat:@"MM/dd/yyyy"];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         [DateFormatter setDateFormat:@"yyyy-MM-dd"];
         self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
         self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
@@ -3351,10 +3346,10 @@
         self.methodView.text = @"Method: ";
         self.payeeView.text = @"Payee: ";
         [DateFormatter setDateFormat:@"MM/dd/yyyy"];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:[NSDate date]]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         [DateFormatter setDateFormat:@"yyyy-MM-dd"];
         self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
-        self.amountView.text = @"Amount: ";
+        self.amountView.text = @"";
         self.txtview.text = @"Description";
         self.descriptiontext = @"";
         self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
@@ -3374,7 +3369,7 @@
 
     NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
     [DateFormatter setDateFormat:@"MM/dd/yyyy 'at' hh:mm a"];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:sender.date]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:sender.date]];
     }
 
 
@@ -3433,7 +3428,7 @@
     if(self.Transa || self.Income){
         NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
         [DateFormatter setDateFormat:@"MM/dd/yyyy"];
-        self.dateView.text = [NSString stringWithFormat:@"Date: %@",[DateFormatter stringFromDate:date]];
+        self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:date]];
         [DateFormatter setDateFormat:@"yyyy-MM-dd"];
         self.dateFilled = [DateFormatter stringFromDate:date];
           [self.calenderPicker removeFromSuperview];

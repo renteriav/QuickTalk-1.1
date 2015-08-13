@@ -10,31 +10,31 @@
 	<string>Auto Kept</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3C355E2735B079B5A93D66056C95B4DCE45653F2</key>
-		<string>https://github.com/renteriav/Auto-Kept-2.1.git</string>
+		<key>47EC976F7C18991634122BCEF8B2C6A9D9EA6209</key>
+		<string>https://github.com/renteriav/QuickTalk-1.1.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Auto Kept.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3C355E2735B079B5A93D66056C95B4DCE45653F2</key>
+		<key>47EC976F7C18991634122BCEF8B2C6A9D9EA6209</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/renteriav/Auto-Kept-2.1.git</string>
+	<string>https://github.com/renteriav/QuickTalk-1.1.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3C355E2735B079B5A93D66056C95B4DCE45653F2</string>
+	<string>47EC976F7C18991634122BCEF8B2C6A9D9EA6209</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3C355E2735B079B5A93D66056C95B4DCE45653F2</string>
+			<string>47EC976F7C18991634122BCEF8B2C6A9D9EA6209</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Auto-Kept-2.1</string>
+			<string>QuickTalk-1.1</string>
 		</dict>
 	</array>
 </dict>

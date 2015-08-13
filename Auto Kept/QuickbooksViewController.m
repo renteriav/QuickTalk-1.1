@@ -36,12 +36,9 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     if ([request.URL.scheme isEqualToString:@"inapp"]) {
         if ([request.URL.host isEqualToString:@"capture"]) {
-            NSLog(@"works");
             NSString *currentURL = [webView stringByEvaluatingJavaScriptFromString:@"window.location.href"];
             NSURL *url = [NSURL URLWithString:currentURL];
             NSString *query = url.query;
-            
-            NSLog(@"%@", query);
             
             NSMutableDictionary *queryStringDictionary = [[NSMutableDictionary alloc] init];
             NSArray *urlComponents = [query componentsSeparatedByString:@"&"];
@@ -62,6 +59,11 @@
             NSLog(@"realm_id = %@", realm_id);
             NSLog(@"secret = %@", secret);
             NSLog(@"token = %@", token);
+            
+            
+            [[NSUserDefaults standardUserDefaults] setObject:realm_id forKey:@"realm_id"];
+            
+            [[NSUserDefaults standardUserDefaults] synchronize];
             
             [self performSegueWithIdentifier:@"AuthToTutorial" sender:nil];
             

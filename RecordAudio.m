@@ -59,7 +59,7 @@
     if(totalamount == nil){
         self.valview.amount.text = @"Amount: N/A ";
     }else{
-        self.valview.amount.text = [NSString stringWithFormat:@"Amount: %@",totalamount];
+        self.valview.amount.text = [NSString stringWithFormat:@"%@",totalamount];
     }
     if(paymentMethod == nil){
         self.valview.method.text = @"Payment Method: N/A";

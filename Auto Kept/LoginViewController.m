@@ -10,9 +10,8 @@
 
 #import "LoginViewController.h"
 #import "SVProgressHUD.h"
-#import "AKStyle.h"
+#import "QTStyle.h"
 #import <QuartzCore/QuartzCore.h>
-#import "AgreeToAccessViewController.h"
 #import <sys/utsname.h>
 #import "HTAutocompleteManager.h"
 #import "HTAutocompleteTextField.h"
@@ -57,11 +56,11 @@
     }else{
     self.oldPhone = false;
     }
-#pragma Set the styles using AKStyle Helper
+#pragma Set the styles using QTStyle Helper
     
     
     // gradient background
-    AKStyle *style = [[AKStyle alloc]init];
+    QTStyle *style = [[QTStyle alloc]init];
     
     CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
     
@@ -233,6 +232,7 @@
                     
                     //Now we use the methods from AKDefult class to perform segues
 
+                    /*
                     if (defaults.showPersonalInfoForm == 1) {
                         [self performSegueWithIdentifier:@"SeguetoPersonalInfo" sender:nil];
                         [SVProgressHUD dismiss];
@@ -251,7 +251,7 @@
                              NSLog(@"Home page view accessed");
                          }
                          else{
-                             SliderViewController *tutorialPage = [self.storyboard instantiateViewControllerWithIdentifier:@"tutorialPage"];
+                             TutorialViewController *tutorialPage = [self.storyboard instantiateViewControllerWithIdentifier:@"tutorialPage"];
                              [self.navigationController pushViewController:tutorialPage animated:YES];
                              [SVProgressHUD dismiss];
                              NSLog(@"Silder View Accessed");
@@ -264,6 +264,7 @@
                     [SVProgressHUD dismiss];
                         
                     }
+                     */
                 }
 
                 else

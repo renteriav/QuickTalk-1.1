@@ -1,21 +1,18 @@
 //
-//  SliderViewController.m
+//  TutorialViewController.m
 //  Auto Kept
 //
 //  Created by Nicholas Bellisario on 4/27/15.
 //  Copyright (c) 2015 Woodenlabs. All rights reserved.
 //
 
-#import "SliderViewController.h"
-#import "AKStyle.h"
+#import "TutorialViewController.h"
+#import "QTStyle.h"
 #import "HomeViewController.h"
 #import "Finished.h"
 #import <AVFoundation/AVFoundation.h>
 
-@interface SliderViewController () <UIScrollViewDelegate>
-@property (weak, nonatomic) IBOutlet UIButton *finishBtn;
-@property (weak, nonatomic) IBOutlet UIScrollView *tutScrollView;
-@property (weak, nonatomic) IBOutlet UIPageControl *tutPageControl;
+@interface TutorialViewController () <UIScrollViewDelegate>
 @property (nonatomic,retain) AVPlayer *player;
 @property (nonatomic,retain) AVPlayerLayer *playerLayer;
 @property (nonatomic,retain) AVAsset *asset;
@@ -24,22 +21,19 @@
 
 @end
 
-@implementation SliderViewController
+@implementation TutorialViewController
 
 @synthesize guid;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    AKStyle *style = [[AKStyle alloc]init];
+    QTStyle *style = [[QTStyle alloc]init];
     CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
     [self.view.layer insertSublayer:gradient atIndex:0];
-    [style whiteBorder:(CALayer *)self.finishBtn.layer];
-    self.tutScrollView.delegate = self;
     
     UIViewController *vc= [[UIViewController alloc] initWithNibName:@"Finished" bundle:nil];
     self.buttonover = (Finished *)vc.view;
-    NSString *test = [[NSBundle mainBundle] pathForResource:@"AppTutVid" ofType:@"mp4"];
     NSURL* videoURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"AppTutVid" ofType:@"mp4"]];
     
     self.asset = [AVAsset assetWithURL:videoURL];
@@ -70,7 +64,7 @@
     NSString *time = [NSString stringWithFormat: @"%f",CMTimeGetSeconds([self.playerItem currentTime])];
     
     
-    if ([time floatValue] >= 61.3){
+    if ([time floatValue] >= 1.3){
         [self finishClcked:nil];
     }
 
@@ -82,6 +76,8 @@
 
 
 - (IBAction)finishClcked:(id)sender {
+    NSLog(@"click");
+    /*
     
     NSDictionary *dictionary = @{ @"profile":@{ @"hide_tutorial_page": @1} };
     
@@ -125,7 +121,10 @@
          {
              [SVProgressHUD showErrorWithStatus:@"Something went wrong, Please try again."];
          }
-     }];
+     }]; */
+    
+    HomeViewController *homeView = [self.storyboard instantiateViewControllerWithIdentifier:@"homeView"];
+    [self.navigationController pushViewController:homeView animated:NO];
 
 
 }
