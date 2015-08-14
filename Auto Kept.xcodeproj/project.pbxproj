@@ -113,6 +113,7 @@
 		82EF65501B7BC82500999EE8 /* qtalk_talk_dashicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82EF65491B7BC82500999EE8 /* qtalk_talk_dashicon.png */; };
 		82EF65511B7BC82500999EE8 /* qtalk_web_dashicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82EF654A1B7BC82500999EE8 /* qtalk_web_dashicon.png */; };
 		82F097AF1B7A68BE007DD048 /* TutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 82F097AE1B7A68BE007DD048 /* TutorialViewController.m */; };
+		82F1ED271B7E5CB700EB7D69 /* NSString+Score.m in Sources */ = {isa = PBXBuildFile; fileRef = 82F1ED261B7E5CB700EB7D69 /* NSString+Score.m */; };
 		FDA3E3EE1AF147D70066CE1C /* AKDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = FDA3E3ED1AF147D70066CE1C /* AKDefault.m */; };
 /* End PBXBuildFile section */
 
@@ -284,6 +285,8 @@
 		82EF654A1B7BC82500999EE8 /* qtalk_web_dashicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qtalk_web_dashicon.png; sourceTree = "<group>"; };
 		82F097AD1B7A68BE007DD048 /* TutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialViewController.h; sourceTree = "<group>"; };
 		82F097AE1B7A68BE007DD048 /* TutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TutorialViewController.m; sourceTree = "<group>"; };
+		82F1ED251B7E5CB700EB7D69 /* NSString+Score.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Score.h"; sourceTree = "<group>"; };
+		82F1ED261B7E5CB700EB7D69 /* NSString+Score.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Score.m"; sourceTree = "<group>"; };
 		FDA3E3EC1AF147D70066CE1C /* AKDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AKDefault.h; sourceTree = "<group>"; };
 		FDA3E3ED1AF147D70066CE1C /* AKDefault.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AKDefault.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -386,6 +389,8 @@
 		374DF7FE1A4FCEC000C343F5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				82F1ED251B7E5CB700EB7D69 /* NSString+Score.h */,
+				82F1ED261B7E5CB700EB7D69 /* NSString+Score.m */,
 				82ECCE461B7BE1D4009B382F /* Nuance_White.png */,
 				82EF65441B7BC82500999EE8 /* qtalk_email_dashicon.png */,
 				82EF65451B7BC82500999EE8 /* qtalk_phone_dashicon.png */,
@@ -740,6 +745,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82F1ED271B7E5CB700EB7D69 /* NSString+Score.m in Sources */,
 				5ADB2EEE1B29017900F37536 /* PulsingHaloLayer.m in Sources */,
 				5A0065AC1B3B71F700E307CC /* HTAutocompleteTextField.m in Sources */,
 				3757DEF51A594FFD00EFFC36 /* AFHTTPRequestOperation.m in Sources */,

@@ -20,12 +20,12 @@
             <string>HelveticaNeue-Bold</string>
             <string>HelveticaNeue-Bold</string>
             <string>HelveticaNeue-Bold</string>
+            <string>HelveticaNeue</string>
             <string>HelveticaNeue-Bold</string>
             <string>HelveticaNeue</string>
+            <string>HelveticaNeue-Bold</string>
             <string>HelveticaNeue</string>
             <string>HelveticaNeue-Medium</string>
-            <string>HelveticaNeue-Bold</string>
-            <string>HelveticaNeue</string>
         </mutableArray>
     </customFonts>
     <scenes>
@@ -339,11 +339,15 @@
                                         <rect key="frame" x="89" y="27" width="148" height="17"/>
                                         <color key="backgroundColor" red="0.55294117649999996" green="0.86666666670000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
+                                            <constraint firstAttribute="width" constant="148" id="Yg5-hW-1mh"/>
                                             <constraint firstAttribute="height" constant="17" id="nvt-YA-hTZ"/>
                                         </constraints>
                                         <color key="textColor" red="0.49803921580314636" green="0.49803921580314636" blue="0.49803921580314636" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad"/>
+                                        <connections>
+                                            <action selector="amountEditBegin:" destination="x7x-b7-gE9" eventType="editingDidBegin" id="web-SW-Qd1"/>
+                                        </connections>
                                     </textField>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="eIO-rY-X29" userLabel="Category Text Field">
                                         <rect key="frame" x="89" y="81" width="148" height="18"/>
