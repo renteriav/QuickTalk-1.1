@@ -29,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIPickerView *CategoryPicker;
 @property (weak, nonatomic) IBOutlet UIPickerView *timePicker;
 @property (weak, nonatomic) IBOutlet UIPickerView *methodPicker;
+@property (weak, nonatomic) IBOutlet UIPickerView *payeePicker;
 
 @property (nonatomic,weak) IBOutlet UIButton* logoButton;
 

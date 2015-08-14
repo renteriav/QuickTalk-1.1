@@ -42,8 +42,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *methodView;
 @property (weak, nonatomic) IBOutlet UITextField *categoryView;
 @property (weak, nonatomic) IBOutlet UIToolbar *pickerDoneBtn;
-@property (weak, nonatomic) IBOutlet HTAutocompleteTextField *payeeView;
 @property (weak, nonatomic) IBOutlet UITextField *dateView;
+@property (weak, nonatomic) IBOutlet UITextField *payeeView;
 @property (nonatomic, strong) UIImage *sendimage;
 @property(nonatomic,retain) IBOutlet UIView* vuMeter;
 @property(nonatomic,retain) IBOutlet UIView* whitelineview;
@@ -69,6 +69,7 @@
 @property (nonatomic) NSArray *companys;
 @property (nonatomic) NSArray *paymentTypes;
 @property (nonatomic) NSArray *categoryTypes;
+@property (nonatomic) NSArray *payeeNames;
 @property (nonatomic) NSString *totalFilled;
 @property (nonatomic) NSString *paymentMethodFilled;
 @property (nonatomic) NSString *cardEndingFilled;
@@ -77,8 +78,10 @@
 @property (nonatomic) NSString *dateFilled;
 @property (nonatomic) NSNumber *paymentMethodId;
 @property (nonatomic) NSNumber *categoryId;
+@property (nonatomic) NSNumber *payeeId;
 @property (nonatomic) NSDictionary *categoryDictionary;
 @property (nonatomic) NSDictionary *methodDictionary;
+@property (nonatomic) NSDictionary *payeeDictionary;
 @property (nonatomic) BOOL Mileage;
 @property (nonatomic) BOOL lockSubmit;
 @property (nonatomic) BOOL Income;
@@ -108,6 +111,7 @@
 @synthesize saveLocalContext;
 @synthesize saveLocalModel;
 @synthesize login;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -154,8 +158,8 @@
     //    [appdelegate setIncomeMethod:@" Cash"];
     //}
     self.amountView.text = @"";
-    self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-    self.payeeView.autocompleteType = HTAutocompleteTypeComp;
+    //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
+    //self.payeeView.autocompleteType = HTAutocompleteTypeComp;
     //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
     //self.methodView.autocompleteType = HTAutocompleteTypeMethod;
     self.companyToPFilled = @"";
@@ -200,7 +204,7 @@
     [style transparentTextBox:(CALayer *) self.amountView.layer];
     [style transparentTextBox:(CALayer *) self.methodView.layer];
     [style transparentTextBox:(CALayer *) self.categoryView.layer];
-    [style textBox:(CALayer *) self.payeeView.layer];
+    [style transparentTextBox:(CALayer *) self.payeeView.layer];
      [style transparentTextBox:(CALayer *) self.dateView.layer];
     self.amountset = FALSE;
     self.methodSet = FALSE;
@@ -239,8 +243,6 @@
     //[self.profileimageView.layer setCornerRadius:30.0];
     self.profileimageView.layer.cornerRadius = self.profileimageView.frame.size.width / 2;
     self.profileimageView.clipsToBounds = TRUE;
-    
-    [self.logoButton.imageView setContentMode:UIViewContentModeScaleAspectFit];
         
     /*
     http://dragonmobile.nuancemobiledeveloper.com/public/index.php
@@ -286,6 +288,7 @@
     
     [self getpaymentMethods];
     [self getExpenseCategories];
+    [self getPayees];
     
     //self.categoryTypes = [NSArray arrayWithObjects:@"Mileage",@"Mileage",@"",@"Money In",@"Money In - I Don't Know", @"Money In - Earned Income",@"",@"Money Out",@"Money Out - I Don’t Know",@"Advertising/Marketing",@"Automotive",@"Bank/CC Fees",@"Charity/Medical/Misc. Tax Deductions",@"Cost Of Goods",@"Credit Card/Loan Payments",@"Dues/Subscriptions/Professional Fees",@"Insurance/Licenses/Permits",@"Meals/Travel/Entertainment",@"Rent/Utilities",@"Sub-Contractor",@"Supplies/Equipment",@"Telecommunications", nil];
     
@@ -322,6 +325,34 @@
 }
 
 #pragma get expense categories and payment methods
+
+- (void)getPayees{
+    
+    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@vendors?realm_id=%@", baseurl, realm_id]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    
+    
+    [request setHTTPMethod:@"GET"];
+    NSURLResponse * response = nil;
+    NSError * error = nil;
+    [SVProgressHUD show];
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&response
+                                                     error:&error];
+    
+    NSMutableDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+    
+    NSLog(@"%@", result);
+    
+    NSMutableArray *allKeys = [[result allKeys] mutableCopy];
+    
+    self.payeeDictionary = result;
+    self.payeeNames = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSLog(@"%@", self.payeeNames);
+    [SVProgressHUD dismiss];
+    
+}
 
 - (void)getExpenseCategories{
     
@@ -431,6 +462,10 @@
         [self.methodPicker setHidden:YES];
         [self.pickerDoneBtn setHidden:YES];
         
+    }
+    if(![self.payeePicker isHidden]){
+        [self.payeePicker setHidden:YES];
+        [self.pickerDoneBtn setHidden:YES];
         
     }
     if(![self.timePicker isHidden]){
@@ -609,6 +644,20 @@
     }
 }
 
+-(void) placeLogoImage{
+    float buttonWidth = self.logoButton.imageView.frame.size.width;
+    
+    float widthRatio = self.logoButton.imageView.bounds.size.width / self.logoButton.imageView.image.size.width;
+    float heightRatio = self.logoButton.imageView.bounds.size.height / self.logoButton.imageView.image.size.height;
+    float scale = MIN(widthRatio, heightRatio);
+    float imageWidth = scale * self.logoButton.imageView.image.size.width;
+    
+    [self.logoButton setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, buttonWidth - imageWidth)];
+    
+    NSLog(@"button width=%ld", (long)buttonWidth);
+    NSLog(@"image width=%ld", (long)imageWidth);
+}
+
 
 -(void) updateScreen
 {
@@ -619,8 +668,10 @@
         [self.logoButton setTitle:@"" forState:UIControlStateNormal];
 
         self.profileimageView.image = [commonunit GetImageFromApp:profileImage];
+        
         [self.logoButton setImage:[commonunit GetImageFromApp:headerImage] forState:UIControlStateNormal];
-        [self.logoButton setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 304-88)];
+        [[self.logoButton imageView] setContentMode: UIViewContentModeScaleAspectFit];
+        [self placeLogoImage];
         
         NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:userData];
         
@@ -711,13 +762,6 @@
     NSString *strdescription = [self.txtview.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if([strdescription length] == 0 || [strdescription isEqualToString:@"Description"])
     {
-        NSArray *dateComponents = [self.dateView.text componentsSeparatedByString:@"/"];
-        NSString *year = [dateComponents objectAtIndex:2];
-        NSString *month = [dateComponents objectAtIndex:0];
-        NSString *day = [dateComponents objectAtIndex:1];
-        self.dateFilled = [NSString stringWithFormat:@"%@-%@-%@", year, month, day ];
-
-        NSLog(@"string=%@", self.dateFilled);
         [SVProgressHUD showErrorWithStatus:@"Please enter description"];
         return;
     }
@@ -730,14 +774,18 @@
         base64String = [[imageData base64EncodedStringWithOptions:0] stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
     }
 
-    //self.paymentMethodFilled = [[self.methodView.text componentsSeparatedByString:@":"] objectAtIndex:1];
     self.paymentMethodFilled = self.methodView.text;
     self.totalFilled = [[self.amountView.text stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@"," withString:@""];
+    NSArray *dateComponents = [self.dateView.text componentsSeparatedByString:@"/"];
+    NSString *year = [dateComponents objectAtIndex:2];
+    NSString *month = [dateComponents objectAtIndex:0];
+    NSString *day = [dateComponents objectAtIndex:1];
+    self.dateFilled = [NSString stringWithFormat:@"%@-%@-%@", year, month, day ];
 
 
     NSString *str;
 
-    str = [NSString stringWithFormat:@"description=%@&amount=%@&bank_account=%@&expense_category=%@&date=%@", self.txtview.text,self.totalFilled, self.paymentMethodId, self.categoryId, self.dateFilled];
+    str = [NSString stringWithFormat:@"description=%@&amount=%@&bank_account=%@&expense_category=%@&payee=%@&date=%@", self.txtview.text,self.totalFilled, self.paymentMethodId,self.categoryId,self.payeeId,self.dateFilled];
     
     self.localtemp = str;
     
@@ -901,6 +949,15 @@
 
     [self.navigationController popToRootViewControllerAnimated:YES ];
 }
+
+-(void) clearFields{
+    self.dateView.text = @"";
+    self.amountView.text = @"";
+    self.payeeView.text = @"";
+    self.methodView.text = @"";
+    self.categoryView.text = @"";
+    self.txtview.text = @"Description";
+}
 -(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if(alertView.tag == 1){
     if (buttonIndex == 0) {
@@ -908,7 +965,8 @@
         NSLog(@"Close Application");
         exit(0);
     }else if(buttonIndex == 1){
-                [self viewDidLoad];
+        //[self viewDidLoad];
+        [self clearFields];
     }else{
         //Todo open safari and load there database
         NSLog(@"Exit App and open Safari");
@@ -1826,8 +1884,8 @@
 
 
     AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-    self.payeeView.autocompleteType = HTAutocompleteTypeComp;
+    //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
+    //self.payeeView.autocompleteType = HTAutocompleteTypeComp;
   
     NSString *total;
     NSString *paymentMethod;
@@ -2998,6 +3056,20 @@
         [self.calenderbar removeFromSuperview];
         
         return NO;
+    }else if(textField == self.payeeView){
+        [self.categoryView resignFirstResponder];
+        [self.methodView resignFirstResponder];
+        [self.amountView resignFirstResponder];
+        [self.txtview resignFirstResponder];
+        [self.amountView resignFirstResponder];
+
+        [self.payeePicker setHidden:NO];
+        [self.pickerDoneBtn setHidden:NO];
+        [self.calenderPicker removeFromSuperview];
+        [self.calenderbar removeFromSuperview];
+        
+        return NO;
+
     }else if(textField == self.amountView){
         [self.CategoryPicker setHidden:YES];
         return YES;
@@ -3013,7 +3085,7 @@
 
 // returns the number of 'columns' to display.
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
-    if(pickerView == self.CategoryPicker || pickerView == self.methodPicker){
+    if(pickerView == self.CategoryPicker || pickerView == self.methodPicker || pickerView == self.payeePicker){
         return 1;
     }else{
         return 3;
@@ -3042,6 +3114,9 @@
     else if(pickerView == self.methodPicker){
         return [self.paymentTypes count];
     }
+    else if(pickerView == self.payeePicker){
+        return [self.payeeNames count];
+    }
     return 0;
 }
 
@@ -3055,6 +3130,9 @@
     }
     else if(pickerView == self.methodPicker){
         return [self.paymentTypes objectAtIndex:row];
+    }
+    else if(pickerView == self.payeePicker){
+        return [self.payeeNames objectAtIndex:row];
     }
     return @"";
 
@@ -3112,6 +3190,13 @@
         self.paymentMethodId = [self.methodDictionary objectForKey: [NSString stringWithFormat:@"%@", [self.paymentTypes objectAtIndex:row]]];
         
     }
+    else if(pickerView == self.payeePicker){
+        self.payeeView.text = [NSString stringWithFormat:@"%@", [self.payeeNames objectAtIndex:row]];
+        
+        self.payeeId = [self.payeeDictionary objectForKey: [NSString stringWithFormat:@"%@", [self.payeeNames objectAtIndex:row]]];
+        
+    }
+
                                        
     else if (pickerView == self.timePicker){
         switch (component) {
@@ -3165,6 +3250,15 @@
         [tView setTextAlignment:UITextAlignmentCenter];
         
         tView.text = [self.paymentTypes objectAtIndex:row];
+        return tView;
+    }else if(pickerView == self.payeePicker){
+        UILabel* tView = (UILabel*)view;
+        tView = [[UILabel alloc] init];
+        [tView setFont:[UIFont fontWithName:@"Arial" size:18]];
+        [tView setTextColor:[UIColor blackColor]];
+        [tView setTextAlignment:UITextAlignmentCenter];
+        
+        tView.text = [self.payeeNames objectAtIndex:row];
         return tView;
     }else{
         UILabel* tView = (UILabel*)view;
@@ -3226,6 +3320,7 @@
 
         return;
     }
+    [self.payeePicker setHidden:YES];
     [self.methodPicker setHidden:YES];
     [self.CategoryPicker setHidden:YES];
     [self.pickerDoneBtn setHidden:YES];
@@ -3292,8 +3387,8 @@
             self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
             [DateFormatter setDateFormat:@"yyyy-MM-dd"];
             self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
-            self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-            self.payeeView.autocompleteType = HTAutocompleteTypeSource;
+            //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
+            //self.payeeView.autocompleteType = HTAutocompleteTypeSource;
             //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
             //self.methodView.autocompleteType = HTAutocompleteTypeRecieve;
             self.methodView.userInteractionEnabled = YES;
@@ -3321,8 +3416,8 @@
         self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:[NSDate date]]];
         [DateFormatter setDateFormat:@"yyyy-MM-dd"];
         self.dateFilled = [DateFormatter stringFromDate:[NSDate date]];
-        self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-        self.payeeView.autocompleteType = HTAutocompleteTypeSource;
+        //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
+        //self.payeeView.autocompleteType = HTAutocompleteTypeSource;
         //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
         //self.methodView.autocompleteType = HTAutocompleteTypeRecieve;
         self.methodView.userInteractionEnabled = YES;
@@ -3352,8 +3447,8 @@
         self.amountView.text = @"";
         self.txtview.text = @"Description";
         self.descriptiontext = @"";
-        self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-        self.payeeView.autocompleteType = HTAutocompleteTypeComp;
+        //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
+        //self.payeeView.autocompleteType = HTAutocompleteTypeComp;
         //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
         //self.methodView.autocompleteType = HTAutocompleteTypeMethod;
         self.methodView.userInteractionEnabled = YES;
