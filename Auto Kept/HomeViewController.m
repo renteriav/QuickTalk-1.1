@@ -21,7 +21,7 @@
 #import "HTAutocompleteTextField.h"
 #import "CKCalendarView.h"
 #import "NSString+Score.h"
-
+#import "AFNetworking.h"
 
 
 #define imagesize CGSizeMake(960, 960)
@@ -33,7 +33,7 @@
 const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0x3e, 0x5b, 0x3c, 0xe3, 0x9a, 0xc6, 0x3d, 0x3b, 0x30, 0x55, 0x6d, 0x83, 0xa0, 0x38, 0x80, 0x40, 0x36, 0x2b, 0x80, 0x97, 0x26, 0xeb, 0x88, 0x8f, 0x8b, 0x4e, 0xff, 0x7c, 0xfa, 0xda, 0xd5, 0x39, 0x35, 0x11, 0x1c, 0xcf, 0xd8, 0x59, 0x0a, 0x08, 0xae, 0x77, 0x8b, 0x4e, 0xb0, 0x0b, 0x8f, 0xe6, 0x37, 0x0f, 0x7d, 0x5d, 0xfa, 0x06, 0xec, 0x85, 0x54, 0xeb, 0x02};
 
 
-@interface HomeViewController () <HTAutocompleteDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITextViewDelegate,UIAlertViewDelegate,UITextFieldDelegate,UIPickerViewDataSource,UIPickerViewDelegate>//MFMailComposeViewControllerDelegate
+@interface HomeViewController () <CKCalendarDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITextViewDelegate,UIAlertViewDelegate,UITextFieldDelegate,UIPickerViewDataSource,UIPickerViewDelegate>//MFMailComposeViewControllerDelegate
 {
     UIImagePickerController *imagePicker;
 }
@@ -88,11 +88,12 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 @property (nonatomic) BOOL Transa;
 @property (nonatomic) int typeTran;
 @property (weak, nonatomic) IBOutlet UILabel *ampmlabel;
-@property (nonatomic) CKCalendarView *calenderPicker;
+@property (nonatomic) CKCalendarView *calendarPicker;
 @property (nonatomic) NSInteger prevrow;
 @property (nonatomic) NSArray *dateValues;
 @property (nonatomic) NSArray *dayValues;
-@property (nonatomic) UIToolbar *calenderbar;
+@property (nonatomic) UIToolbar *calendarbar;
+@property (nonatomic) NSString *accessToken;
 
 
 
@@ -116,17 +117,17 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    _calenderPicker = [[CKCalendarView alloc] init];
+    _calendarPicker = [[CKCalendarView alloc] init];
     
-    _calenderPicker.delegate = self;
+    _calendarPicker.delegate = self;
     
-    self.calenderbar = [[UIToolbar alloc] init];
+    self.calendarbar = [[UIToolbar alloc] init];
     
-    
+    self.accessToken = [[NSUserDefaults standardUserDefaults] valueForKey:@"AccessToken"];
     
     NSMutableArray *items = [[NSMutableArray alloc] init];
     [items addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(cateDoneClicked:)]];
-    [self.calenderbar setItems:items animated:NO];
+    [self.calendarbar setItems:items animated:NO];
     
     
     
@@ -134,34 +135,13 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     QTStyle *style = [[QTStyle alloc]init];
     self.descriptiontext = @"";
     self.firstTime = true;
-    //NSLog(@"initial dic%@",[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
-    // NSLog(self.login ? @"Yes" : @"No");
     
-    //[self loadData];
+    [self loadData];
     
     // NSLog(@"\n new dic%@",[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
     
     self.allData = [[NSMutableArray alloc] init];
-    //AppDelegate *appdelegate = [[UIApplication sharedApplication] delegate];
-    
-    //self.categoryView = [[HTAutocompleteTextField alloc] init];
-    //NSArray *cards = [appdelegate getCards];
-    //NSArray *methodtypes = [appdelegate getIncomeMethods];
-    //if(self.login || cards.count == 0){
-    
-    //    [appdelegate saveCardInfo:@"Login"];
-    
-    //}
-    //if(self.login || methodtypes.count == 0){
-    //    [appdelegate setIncomeMethod:@" Card"];
-    //    [appdelegate setIncomeMethod:@" Check"];
-    //    [appdelegate setIncomeMethod:@" Cash"];
-    //}
     self.amountView.text = @"";
-    //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-    //self.payeeView.autocompleteType = HTAutocompleteTypeComp;
-    //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-    //self.methodView.autocompleteType = HTAutocompleteTypeMethod;
     self.companyToPFilled = @"";
     self.totalFilled = @"";
     self.paymentMethodFilled = @"";
@@ -169,19 +149,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     self.cateFilled = @"";
     self.cardEndingFilled = @"";
     self.dateView.text = @"";
-    
-    
-    /*
-     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"show_personal_info_form"]boolValue]){
-     if([self checkprofile]){
-     //navigate to personal profile screen
-     [SVProgressHUD dismiss];
-     [self performSegueWithIdentifier:@"Updateuserinfo" sender:nil];
-     [voiceSearch cancel];
-     return;
-     
-     }
-     }*/
     self.Mileage = NO;
     self.lockSubmit = NO;
     self.Transa = YES;
@@ -193,7 +160,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     self.amountView.delegate = self;
     self.typeTran = 1;
     
-    [style greyBorder:(CALayer *) self.textboxContainer.layer];
+    [style roundBorder:(CALayer *) self.textboxContainer.layer];
     [style blueBackground:(CALayer *) self.view.layer];
     [style blueBackground:(CALayer *) self.submitbtn.layer];
     [style blueBackground:(CALayer *) self.sharebtn.layer];
@@ -234,13 +201,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     
     vc = nil;
     
-    
-    
-    
     //[self.recordOverlay.cancelbtn addTarget:self action:@selector(cancelrecording) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    //[self.profileimageView.layer setCornerRadius:30.0];
+
     self.profileimageView.layer.cornerRadius = self.profileimageView.frame.size.width / 2;
     self.profileimageView.clipsToBounds = TRUE;
     
@@ -283,14 +245,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     [self checkforpastuploads];
     [SVProgressHUD dismiss];
     
-    
-    //self.paymentTypes = [appdelegate getCards];
-    
     [self getpaymentMethods];
     [self getExpenseCategories];
     [self getPayees];
-    
-    //self.categoryTypes = [NSArray arrayWithObjects:@"Mileage",@"Mileage",@"",@"Money In",@"Money In - I Don't Know", @"Money In - Earned Income",@"",@"Money Out",@"Money Out - I Don’t Know",@"Advertising/Marketing",@"Automotive",@"Bank/CC Fees",@"Charity/Medical/Misc. Tax Deductions",@"Cost Of Goods",@"Credit Card/Loan Payments",@"Dues/Subscriptions/Professional Fees",@"Insurance/Licenses/Permits",@"Meals/Travel/Entertainment",@"Rent/Utilities",@"Sub-Contractor",@"Supplies/Equipment",@"Telecommunications", nil];
     
     
     self.dateValues = @[@[@"01",@"02",@"03",@"04",@"05",@"06",@"07",@"08",@"09",@"10",@"11",@"12",@""],
@@ -301,6 +258,13 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     self.dayValues = [NSArray arrayWithObjects:@"January",@"February",@"March",@"April",@"May",@"June",@"July",@"August",@"September",@"October",@"November",@"December", nil];
     
     self.dateView.delegate = self;
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
+    [numberFormatter setMaximumFractionDigits:2];
+    [numberFormatter setMinimumFractionDigits:2];
+    
+    self.amountView.text = [numberFormatter stringFromNumber:[NSNumber numberWithInt:0]];
     
     
 }
@@ -472,9 +436,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         [self.timePicker setHidden:YES];
         [self.pickerDoneBtn setHidden:YES];
     }
-    if([self.view.subviews containsObject:self.calenderPicker]){
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+    if([self.view.subviews containsObject:self.calendarPicker]){
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         
     }
     if([self.methodView isFirstResponder]){
@@ -752,6 +716,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
 -(IBAction)SubmitClicked:(id)sender
 {
+    
+    UIAlertView *uploadFailMessage = [[UIAlertView alloc] initWithTitle:@"Whoops!" message:@"We apologize, however we’re having trouble submitting this entry at the moment." delegate:self cancelButtonTitle:@"Try Again Now" otherButtonTitles:@"Save And Upload Later", nil];
+    
     [self.view endEditing:TRUE];
     if(self.lockSubmit){
         UIAlertView *badDate = [[UIAlertView alloc] initWithTitle:@"Incorrect Date" message:@"Please Correct Your Date Entry Before Attempting to Submit \n ie: 12/23/2015 at 5:00 PM " delegate:self cancelButtonTitle:@"OK!" otherButtonTitles:nil, nil];
@@ -774,7 +741,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         base64String = [[imageData base64EncodedStringWithOptions:0] stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
     }
     
-    //self.paymentMethodFilled = [[self.methodView.text componentsSeparatedByString:@":"] objectAtIndex:1];
     self.paymentMethodFilled = self.methodView.text;
     self.totalFilled = [[self.amountView.text stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@"," withString:@""];
     NSArray *dateComponents = [self.dateView.text componentsSeparatedByString:@"/"];
@@ -783,75 +749,47 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     NSString *day = [dateComponents objectAtIndex:1];
     self.dateFilled = [NSString stringWithFormat:@"%@-%@-%@", year, month, day ];
     
-    
-    NSString *str;
-    
-    str = [NSString stringWithFormat:@"description=%@&amount=%@&bank_account=%@&expense_category=%@&payee=%@&date=%@", self.txtview.text,self.totalFilled, self.paymentMethodId,self.categoryId,self.payeeId,self.dateFilled];
-    
-    self.localtemp = str;
-    
-    //NSLog(str);
-    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
-    
     NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
+    NSString *urlString = [NSString stringWithFormat:@"%@create_purchase?realm_id=%@", baseurl, realm_id];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@create_purchase?realm_id=%@", baseurl, realm_id]];
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:5];
-    [request setHTTPMethod:@"POST"];
-    [request setHTTPBody:data];
-    data= nil;
-    // upload message fail
-    UIAlertView *uploadFailMessage = [[UIAlertView alloc] initWithTitle:@"Whoops!" message:@"We apologize, however we’re having trouble submitting this entry at the moment." delegate:self cancelButtonTitle:@"Try Again Now" otherButtonTitles:@"Save And Upload Later", nil];
-    
-    [SVProgressHUD show];
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-     {
-         dispatch_async(dispatch_get_main_queue(), ^{
-             if(error == nil)
-             {
-                 NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                 NSRange range = [string rangeOfString:@"{"];
-                 if(range.length > 0)
-                 {
-                     NSMutableDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-                     NSLog(@"%@",result);
-                     if([result[@"success"] intValue] == 1)
-                     {
-                         self.sendimage = nil;
-                         self.txtview.text = @"Description";
-                         //[SVProgressHUD showErrorWithStatus:@"Upload Successful! Click your iPhone home button to close the app."];
-                         [SVProgressHUD dismiss];
-                         UIAlertView *lastcall = [[UIAlertView alloc] initWithTitle:@"Upload Successful!" message:@"Please go to your QuickBooks online to see your document." delegate:self cancelButtonTitle:@"Exit App" otherButtonTitles:@"Submit Another",nil ];
-                         
-                         lastcall.tag = 1;
-                         self.localtemp = nil;
-                         [lastcall show];
-                     }
-                     else
-                     {
-                         //[SVProgressHUD showErrorWithStatus:@"Upload not successful, please try again."];
-                         uploadFailMessage.tag = 2;
-                         [uploadFailMessage show];
-                         [SVProgressHUD dismiss];
-                     }
-                 }
-                 else
-                 {
-                     //[SVProgressHUD showErrorWithStatus:@"Upload not successful, please try again."];
-                     uploadFailMessage.tag = 2;
-                     [uploadFailMessage show];
-                     [SVProgressHUD dismiss];
-                 }
-             }
-             else
-             {
-                 uploadFailMessage.tag = 2;
-                 [uploadFailMessage show];
-                 [SVProgressHUD dismiss];
-             }
-         });
-     }];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *parameters = @{@"description": self.txtview.text,
+                                 @"amount": self.totalFilled,
+                                 @"bank_account": self.paymentMethodId,
+                                 @"expense_category": self.categoryId,
+                                 @"payee": self.payeeId,
+                                 @"date": self.dateFilled };
+    NSURL *filePath = [NSURL fileURLWithPath:@"/Users/franciscorenteria/Pictures/christmas-music-notes-border-singing_8355-1.jpg"];
+    [manager POST:urlString parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        [formData appendPartWithFileURL:filePath name:@"file" error:nil];
+        [SVProgressHUD show];
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if([responseObject[@"success"] intValue] == 1)
+        {
+            self.sendimage = nil;
+            self.txtview.text = @"Description";
+            [SVProgressHUD dismiss];
+            UIAlertView *lastcall = [[UIAlertView alloc] initWithTitle:@"Upload Successful!" message:@"Please go to your QuickBooks online to see your document." delegate:self cancelButtonTitle:@"Exit App" otherButtonTitles:@"Submit Another",nil ];
+            
+            lastcall.tag = 1;
+            self.localtemp = nil;
+            [lastcall show];
+        }
+        else
+        {
+            uploadFailMessage.tag = 2;
+            [uploadFailMessage show];
+            [SVProgressHUD dismiss];
+        }
+
+        NSLog(@"Success: %@", responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [SVProgressHUD dismiss];
+        UIAlertView *errorAlert = [[UIAlertView alloc] initWithTitle:@"Something Went Wrong!" message:@"Please try again later" delegate:self cancelButtonTitle:@"Exit App" otherButtonTitles:@"Try Again",nil ];
+        [errorAlert show];
+
+        NSLog(@"Error: %@", error);
+    }];
     
 }
 
@@ -944,12 +882,22 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     [appDelegate deleteCards];
     [appDelegate wipeSources];
     [appDelegate wipeMethodSources];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"user_guid"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"AccessToken"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     
     [self.navigationController popToRootViewControllerAnimated:YES ];
 }
+
+-(void) clearFields{
+    self.dateView.text = @"";
+    self.amountView.text = @"$0.00";
+    self.payeeView.text = @"";
+    self.methodView.text = @"";
+    self.categoryView.text = @"";
+    self.txtview.text = @"Description";
+}
+
 -(void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if(alertView.tag == 1){
         if (buttonIndex == 0) {
@@ -957,7 +905,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
             NSLog(@"Close Application");
             exit(0);
         }else if(buttonIndex == 1){
-            [self viewDidLoad];
+            [self clearFields];
         }else{
             //Todo open safari and load there database
             NSLog(@"Exit App and open Safari");
@@ -1011,66 +959,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 {
     NSLog(@"Picha!!");
     [imagePicker takePicture];
-    /*
-     switch (self.typeTran){
-     case 0:
-     self.Transa = NO;
-     self.Mileage = NO;
-     self.Income = YES;
-     self.methodSet = NO;
-     self.compSet = NO;
-     self.amountset = NO;
-     self.cateSet = NO;
-     self.methodView.text = @"Method: ";
-     self.payeeView.text = @"Source: ";
-     self.dateView.text = @"Date: ";
-     self.amountView.text = @"Amount: ";
-     self.txtview.text = @"Description";
-     //self.categoryView.text = @"Category: ";
-     //self.descriptiontext = @"";
-     self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-     self.payeeView.autocompleteType = HTAutocompleteTypeSource;
-     //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-     //self.methodView.autocompleteType = HTAutocompleteTypeRecieve;
-     break;
-     case 1:
-     self.Transa = YES;
-     self.Mileage = NO;
-     self.Income = NO;
-     self.methodSet = NO;
-     self.compSet = NO;
-     self.amountset = NO;
-     self.cateSet = NO;
-     
-     self.methodView.text = @"Method: ";
-     self.payeeView.text = @"Payee: ";
-     self.dateView.text = @"Date: ";
-     self.amountView.text = @"Amount: ";
-     self.categoryView.text = @"Category: ";
-     self.txtview.text = @"Description";
-     self.descriptiontext = @"";
-     self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-     self.payeeView.autocompleteType = HTAutocompleteTypeComp;
-     break;
-     case 2:
-     self.Transa = NO;
-     self.Mileage = YES;
-     self.Income = NO;
-     self.methodSet = NO;
-     self.compSet = NO;
-     self.amountset = NO;
-     self.cateSet = YES;
-     self.payeeView.placeholder = @"";
-     self.methodView.placeholder = @"";
-     self.methodView.text = @"";
-     self.payeeView.text = @"";
-     self.dateView.text = @"Date: ";
-     self.amountView.text = @"Mileage: ";
-     self.categoryView.text = @"Category: Mileage";
-     self.txtview.text = @"Description";
-     self.descriptiontext = @"";
-     break;
-     }*/
 }
 
 -(void) cancelImage:(id)sender
@@ -1078,72 +966,11 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     [imagePicker dismissViewControllerAnimated:TRUE completion:nil];
     imagePicker = nil;
     NSLog(@"No Picha!!");
-    /*
-     switch (self.typeTran){
-     case 0:
-     self.Transa = NO;
-     self.Mileage = NO;
-     self.Income = YES;
-     self.methodSet = NO;
-     self.compSet = NO;
-     self.amountset = NO;
-     self.cateSet = NO;
-     self.methodView.text = @"Method: ";
-     self.payeeView.text = @"Source: ";
-     self.dateView.text = @"Date: ";
-     self.amountView.text = @"Amount: ";
-     self.txtview.text = @"Description";
-     self.descriptiontext = @"";
-     self.categoryView.text = @"Category: ";
-     self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-     self.payeeView.autocompleteType = HTAutocompleteTypeSource;
-     //self.methodView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-     //self.methodView.autocompleteType = HTAutocompleteTypeRecieve;
-     break;
-     case 1:
-     self.Transa = YES;
-     self.Mileage = NO;
-     self.Income = NO;
-     self.methodSet = NO;
-     self.compSet = NO;
-     self.amountset = NO;
-     self.cateSet = NO;
-     self.categoryView.text = @"Category: ";
-     self.methodView.text = @"Method: ";
-     self.payeeView.text = @"Payee: ";
-     self.dateView.text = @"Date: ";
-     self.amountView.text = @"Amount: ";
-     self.txtview.text = @"Description";
-     self.descriptiontext = @"";
-     self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-     self.payeeView.autocompleteType = HTAutocompleteTypeComp;
-     
-     break;
-     case 2:
-     self.Transa = NO;
-     self.Mileage = YES;
-     self.Income = NO;
-     self.methodSet = NO;
-     self.compSet = NO;
-     self.amountset = NO;
-     self.cateSet = YES;
-     self.payeeView.placeholder = @"";
-     self.methodView.placeholder = @"";
-     self.methodView.text = @"";
-     self.payeeView.text = @"";
-     self.dateView.text = @"Date: ";
-     self.amountView.text = @"Mileage: ";
-     self.txtview.text = @"Description";
-     self.descriptiontext = @"";
-     self.categoryView.text = @"Category: Mileage";
-     break;
-     }*/
     dispatch_async(dispatch_get_main_queue(), ^{
         [self StartButtonAction:nil];
     });
 }
 
-#pragma mark -
 #pragma mark VU Meter
 
 - (void)setVUMeterWidth:(float)width {
@@ -1249,7 +1076,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
 - (void)retryUpload:(NSManagedObject *)datatosend{
     
-    NSString *temp = [datatosend valueForKey:@"savedData"];
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@submit",baseurl]];
     NSData *data = [[datatosend valueForKey:@"savedData"] dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:5];
@@ -1374,9 +1200,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
                     float totalamount = [[[stringofValues objectAtIndex:(i+1)] stringByReplacingOccurrencesOfString:@"$" withString:@""] floatValue] + [[[stringofValues objectAtIndex:(i-1)]stringByReplacingOccurrencesOfString:@"$" withString:@"" ] floatValue];
                     NSString *replacement = [NSString stringWithFormat:@"%@ %@ %@", [stringofValues objectAtIndex:(i-1)], [stringofValues objectAtIndex:(i)],[stringofValues objectAtIndex:(i+1)]];
                     if (self.Mileage){
-                        rebuiltString = [[results firstResult] stringByReplacingOccurrencesOfString:replacement withString:[NSString stringWithFormat:[NSString stringWithFormat:@"%.1f", totalamount]]];
+                        rebuiltString = [[results firstResult] stringByReplacingOccurrencesOfString:replacement withString:[NSString stringWithFormat:@"%@",[NSString stringWithFormat:@"%.1f", totalamount]]];
                     }else{
-                        rebuiltString = [[results firstResult] stringByReplacingOccurrencesOfString:replacement withString:[NSString stringWithFormat:[NSString stringWithFormat:@"$%.2f", totalamount]]];
+                        rebuiltString = [[results firstResult] stringByReplacingOccurrencesOfString:replacement withString:[NSString stringWithFormat:@"%@",[NSString stringWithFormat:@"$%.2f", totalamount]]];
                     }
                     added = true;
                     
@@ -1873,8 +1699,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
 -(void)Transaction:(NSString *)values{
     
-    
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
     //self.payeeView.autocompleteType = HTAutocompleteTypeComp;
     
@@ -1891,7 +1715,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     
     
     BOOL amex = false;
-    BOOL cardFound = false;
     BOOL cardNumberFound = false;
     if (self.Mileage){
         self.methodSet = NO;
@@ -1932,7 +1755,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     BOOL valid;
     
     if (!self.amountset){
-        self.amountView.text = @"";
+        self.amountView.text = @"$0.0";
     }
     if (!self.methodSet){
         self.methodView.text = @"";
@@ -2035,12 +1858,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         }
         
         
-        
-        
-        // Trial of new search Algorthm
-        bool compfound = false;
-        
-        
     }
     //Category & Type Search
     for (int i = 0; i < [stringofValues count]; i++) {
@@ -2082,7 +1899,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         if(![amount isEqualToString:@""]){
             float value = [amount floatValue];
             total = [NSString stringWithFormat:@"%.2f", value];
-            self.amountView.text  = [NSString stringWithFormat:@"$%@", total];
             [self amountedit:self];
             self.amountset = TRUE;
             self.totalFilled = total;
@@ -2101,33 +1917,20 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 //ATTACH ME TO THE AMOUNT EditDidBegin
 -(IBAction)amountEditBegin:(id)sender{
     [self.pickerDoneBtn setHidden:NO];
-    self.amountView.text =[[[self.amountView.text stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""]stringByReplacingOccurrencesOfString:@"," withString:@""];
+
 }
 
 
 - (IBAction)amountedit:(id)sender {
     
-    
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    
-    
     NSString *amount = [[[self.amountView.text stringByReplacingOccurrencesOfString:@"$" withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""]stringByReplacingOccurrencesOfString:@"," withString:@""];
     
     float value = [amount floatValue];
     
+    self.totalFilled = [NSString stringWithFormat:@"$%.2f", value];
     
-    if(self.Mileage){
-        //  amount = [NSString stringWithFormat:@"%.1f", value];
-        
-        self.amountView.text = [NSString stringWithFormat:@"Mileage: %.1f Miles", value];
-        self.totalFilled = [NSString stringWithFormat:@"$%.1f", value];
-        
-    }else{
-        //   amount = [NSString stringWithFormat:@"%.2f", value];
-        self.amountView.text = [NSString stringWithFormat:@"$%.2f", value];
-        self.totalFilled = [NSString stringWithFormat:@"$%.2f", value];
-    }
+    [self.payeePicker setHidden:YES];
+    [self.methodPicker setHidden:YES];
     [self.CategoryPicker setHidden:YES];
     [self.pickerDoneBtn setHidden:YES];
 }
@@ -2160,32 +1963,79 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
             
         }
     }
-    /*
-     if(textField == self.amountView){
-     if(self.Mileage){
-     NSString *amountText = @"Mileage:";
-     if (range.location > amountText.length)
-     {
-     return YES;
-     }else{
+
+    if(textField == self.amountView){
+        NSInteger MAX_DIGITS = 11; // $999,999,999.99
+        
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
+        [numberFormatter setMaximumFractionDigits:2];
+        [numberFormatter setMinimumFractionDigits:2];
+        
+        NSString *stringMaybeChanged = [NSString stringWithString:string];
+        if (stringMaybeChanged.length > 1)
+        {
+            NSMutableString *stringPasted = [NSMutableString stringWithString:stringMaybeChanged];
+            
+            [stringPasted replaceOccurrencesOfString:numberFormatter.currencySymbol
+                                          withString:@""
+                                             options:NSLiteralSearch
+                                               range:NSMakeRange(0, [stringPasted length])];
+            
+            [stringPasted replaceOccurrencesOfString:numberFormatter.groupingSeparator
+                                          withString:@""
+                                             options:NSLiteralSearch
+                                               range:NSMakeRange(0, [stringPasted length])];
+            
+            NSDecimalNumber *numberPasted = [NSDecimalNumber decimalNumberWithString:stringPasted];
+            stringMaybeChanged = [numberFormatter stringFromNumber:numberPasted];
+        }
+        
+        UITextRange *selectedRange = [textField selectedTextRange];
+        UITextPosition *start = textField.beginningOfDocument;
+        NSInteger cursorOffset = [textField offsetFromPosition:start toPosition:selectedRange.start];
+        NSMutableString *textFieldTextStr = [NSMutableString stringWithString:textField.text];
+        NSUInteger textFieldTextStrLength = textFieldTextStr.length;
+        
+        [textFieldTextStr replaceCharactersInRange:range withString:stringMaybeChanged];
+        
+        [textFieldTextStr replaceOccurrencesOfString:numberFormatter.currencySymbol
+                                          withString:@""
+                                             options:NSLiteralSearch
+                                               range:NSMakeRange(0, [textFieldTextStr length])];
+        
+        [textFieldTextStr replaceOccurrencesOfString:numberFormatter.groupingSeparator
+                                          withString:@""
+                                             options:NSLiteralSearch
+                                               range:NSMakeRange(0, [textFieldTextStr length])];
+        
+        [textFieldTextStr replaceOccurrencesOfString:numberFormatter.decimalSeparator
+                                          withString:@""
+                                             options:NSLiteralSearch
+                                               range:NSMakeRange(0, [textFieldTextStr length])];
+        
+        if (textFieldTextStr.length <= MAX_DIGITS)
+        {
+            NSDecimalNumber *textFieldTextNum = [NSDecimalNumber decimalNumberWithString:textFieldTextStr];
+            NSDecimalNumber *divideByNum = [[[NSDecimalNumber alloc] initWithInt:10] decimalNumberByRaisingToPower:numberFormatter.maximumFractionDigits];
+            NSDecimalNumber *textFieldTextNewNum = [textFieldTextNum decimalNumberByDividingBy:divideByNum];
+            NSString *textFieldTextNewStr = [numberFormatter stringFromNumber:textFieldTextNewNum];
+            
+            textField.text = textFieldTextNewStr;
+            
+            if (cursorOffset != textFieldTextStrLength)
+            {
+                NSInteger lengthDelta = textFieldTextNewStr.length - textFieldTextStrLength;
+                NSInteger newCursorOffset = MAX(0, MIN(textFieldTextNewStr.length, cursorOffset + lengthDelta));
+                UITextPosition* newPosition = [textField positionFromPosition:textField.beginningOfDocument offset:newCursorOffset];
+                UITextRange* newRange = [textField textRangeFromPosition:newPosition toPosition:newPosition];
+                [textField setSelectedTextRange:newRange];
+            }
+        }
+        
+        return NO;
+    }
      
-     return NO;
-     
-     }
-     
-     }else{
-     NSString *amountText = @"";
-     if (range.location > amountText.length)
-     {
-     
-     return YES;
-     }else{
-     
-     return NO;
-     
-     }
-     }
-     }*/
     if(textField == self.dateView){
         
         if(!self.Mileage){
@@ -2760,31 +2610,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     
 }
 
-- (BOOL)checkprofile{
-    
-    NSString *strguid = [[NSUserDefaults standardUserDefaults] objectForKey:@"user_guid"];
-    NSURL *url = [NSURL URLWithString:[[NSString stringWithFormat:@"%@profile?guid=",baseurl]stringByAppendingString:strguid]];
-    //NSLog(@"companyLogo:%@",url);
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    
-    
-    [request setHTTPMethod:@"GET"];
-    NSURLResponse * response = nil;
-    NSError * error = nil;
-    [SVProgressHUD show];
-    NSData *data = [NSURLConnection sendSynchronousRequest:request
-                                         returningResponse:&response
-                                                     error:&error];
-    
-    NSMutableDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    
-    if ([result[@"show_personal_info_form"] boolValue]){
-        return true;
-    }else{
-        return false;
-    }
-}
-
 - (void)cancelrecording:(id)sender{
     //Unlock for next update KEYWORD SuperSiri
     //[self.recordOverlay willMoveToParentViewController:nil];
@@ -2857,8 +2682,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         }
         [self.CategoryPicker setHidden:NO];
         [self.pickerDoneBtn setHidden:NO];
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         
         return NO;
     }else if(textField == self.methodView){
@@ -2878,8 +2703,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         }
         [self.methodPicker setHidden:NO];
         [self.pickerDoneBtn setHidden:NO];
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         
         return NO;
     }else if(textField == self.payeeView){
@@ -2891,8 +2716,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         
         [self.payeePicker setHidden:NO];
         [self.pickerDoneBtn setHidden:NO];
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         
         return NO;
         
@@ -2903,8 +2728,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     }else{
         [self.CategoryPicker setHidden:YES];
         [self.pickerDoneBtn setHidden:NO];
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         return YES;
     }
 }
@@ -2985,8 +2810,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         [voiceSearch cancel];
         [self.timePicker setHidden:NO];
         [self.pickerDoneBtn setHidden:NO];
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         if([self.amountView isFirstResponder]){
             [self.amountView resignFirstResponder];
             [self.pickerDoneBtn setHidden:NO];
@@ -3064,7 +2889,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         tView = [[UILabel alloc] init];
         [tView setFont:[UIFont fontWithName:@"Arial" size:18]];
         [tView setTextColor:[UIColor blackColor]];
-        [tView setTextAlignment:UITextAlignmentCenter];
+        [tView setTextAlignment:NSTextAlignmentCenter];
         
         tView.text = [self.categoryTypes objectAtIndex:row];
         return tView;
@@ -3073,7 +2898,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         tView = [[UILabel alloc] init];
         [tView setFont:[UIFont fontWithName:@"Arial" size:18]];
         [tView setTextColor:[UIColor blackColor]];
-        [tView setTextAlignment:UITextAlignmentCenter];
+        [tView setTextAlignment:NSTextAlignmentCenter];
         
         tView.text = [self.paymentTypes objectAtIndex:row];
         return tView;
@@ -3082,7 +2907,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         tView = [[UILabel alloc] init];
         [tView setFont:[UIFont fontWithName:@"Arial" size:18]];
         [tView setTextColor:[UIColor blackColor]];
-        [tView setTextAlignment:UITextAlignmentCenter];
+        [tView setTextAlignment:NSTextAlignmentCenter];
         
         tView.text = [self.payeeNames objectAtIndex:row];
         return tView;
@@ -3092,7 +2917,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
             tView = [[UILabel alloc] init];
             [tView setFont:[UIFont fontWithName:@"Arial-BoldMT" size:24]];
             [tView setTextColor:[UIColor whiteColor]];
-            [tView setTextAlignment:UITextAlignmentCenter];
+            [tView setTextAlignment:NSTextAlignmentCenter];
             tView.numberOfLines=1;
             
             tView.text = self.dateValues[component][row];
@@ -3125,9 +2950,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
 
 - (IBAction)cateDoneClicked:(id)sender {
-    if([self.view.subviews containsObject:self.calenderPicker]){
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+    if([self.view.subviews containsObject:self.calendarPicker]){
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
     }
     if([self.amountView isFirstResponder]){
         [self.amountView resignFirstResponder];
@@ -3165,9 +2990,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
             if(self.Mileage){
                 return;
             }
-            _calenderPicker = [[CKCalendarView alloc] init];
+            _calendarPicker = [[CKCalendarView alloc] init];
             
-            _calenderPicker.delegate = self;
+            _calendarPicker.delegate = self;
             self.Mileage = true;
             self.Transa = false;
             self.Income = false;
@@ -3193,9 +3018,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
                 return;
             }
             if([[[categorySelected componentsSeparatedByString:@" - "] objectAtIndex:1] rangeOfString:@"Earned Income"].location !=NSNotFound){
-                _calenderPicker = [[CKCalendarView alloc] init];
+                _calendarPicker = [[CKCalendarView alloc] init];
                 
-                _calenderPicker.delegate = self;
+                _calendarPicker.delegate = self;
                 self.Mileage = false;
                 self.Transa = false;
                 self.Income = true;
@@ -3222,9 +3047,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
                 
             }
             
-            _calenderPicker = [[CKCalendarView alloc] init];
+            _calendarPicker = [[CKCalendarView alloc] init];
             
-            _calenderPicker.delegate = self;
+            _calendarPicker.delegate = self;
             self.Mileage = false;
             self.Transa = false;
             self.Income = true;
@@ -3253,9 +3078,9 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
             if(self.Transa){
                 return;
             }
-            _calenderPicker = [[CKCalendarView alloc] init];
+            _calendarPicker = [[CKCalendarView alloc] init];
             
-            _calenderPicker.delegate = self;
+            _calendarPicker.delegate = self;
             self.Mileage = false;
             self.Transa = true;
             self.Income = false;
@@ -3297,21 +3122,18 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
 - (IBAction)amounteditbegin:(id)sender {
     [self.pickerDoneBtn setHidden:NO];
-    [self.calenderPicker removeFromSuperview];
+    [self.calendarPicker removeFromSuperview];
     [self.timePicker setHidden:YES];
-    [self.calenderbar removeFromSuperview];
-    if(self.Mileage){
-        self.amountView.text = [self.amountView.text stringByReplacingOccurrencesOfString:@" Miles" withString:@""];
-    }
+    [self.calendarbar removeFromSuperview];
     
     
 }
 - (IBAction)datebegin:(id)sender {
-    self.calenderbar.frame = CGRectMake(0, self.view.frame.size.height/2-40, self.view.frame.size.width, 44);
-    [self.view addSubview:self.calenderbar];
-    [self.calenderPicker setFrame:CGRectMake(0, self.view.frame.size.height/2, self.view.frame.size.width, self.view.frame.size.height/2)];
+    self.calendarbar.frame = CGRectMake(0, self.view.frame.size.height/2-40, self.view.frame.size.width, 44);
+    [self.view addSubview:self.calendarbar];
+    [self.calendarPicker setFrame:CGRectMake(0, self.view.frame.size.height/2, self.view.frame.size.width, self.view.frame.size.height/2)];
     [voiceSearch cancel];
-    [self.view addSubview: _calenderPicker];
+    [self.view addSubview: _calendarPicker];
     [self.pickerDoneBtn setHidden:YES];
     [self.timePicker setHidden:YES];
     if ([self.amountView isFirstResponder]){
@@ -3340,8 +3162,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         self.dateView.text = [NSString stringWithFormat:@"Date: %@ at%@",[DateFormatter stringFromDate:date], [savetime objectAtIndex:2]];
         [DateFormatter setDateFormat:@"yyyy-MM-dd"];
         self.dateFilled = [DateFormatter stringFromDate:date];
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         
         
     }
@@ -3352,8 +3174,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
         self.dateView.text = [NSString stringWithFormat:@"%@",[DateFormatter stringFromDate:date]];
         [DateFormatter setDateFormat:@"yyyy-MM-dd"];
         self.dateFilled = [DateFormatter stringFromDate:date];
-        [self.calenderPicker removeFromSuperview];
-        [self.calenderbar removeFromSuperview];
+        [self.calendarPicker removeFromSuperview];
+        [self.calendarbar removeFromSuperview];
         
         
     }

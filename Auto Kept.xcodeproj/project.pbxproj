@@ -103,6 +103,7 @@
 		6BE8C1501A9DA13B0026D964 /* Overlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BE8C14F1A9DA13B0026D964 /* Overlay.xib */; };
 		6BE8C1531A9DA1C00026D964 /* Overlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE8C1521A9DA1C00026D964 /* Overlay.m */; };
 		82E80B281B798D0A005909E0 /* QTStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 82E80B271B798D0A005909E0 /* QTStyle.m */; };
+		82EAA9D01B82AA8500746085 /* OproAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 82EAA9CF1B82AA8500746085 /* OproAPIClient.m */; };
 		82ECCE451B7BCFB5009B382F /* QuickbooksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 82ECCE441B7BCFB5009B382F /* QuickbooksViewController.m */; };
 		82ECCE471B7BE1D4009B382F /* Nuance_White.png in Resources */ = {isa = PBXBuildFile; fileRef = 82ECCE461B7BE1D4009B382F /* Nuance_White.png */; };
 		82EF654B1B7BC82500999EE8 /* qtalk_email_dashicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82EF65441B7BC82500999EE8 /* qtalk_email_dashicon.png */; };
@@ -112,6 +113,9 @@
 		82EF654F1B7BC82500999EE8 /* qtalk_submit_dashicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82EF65481B7BC82500999EE8 /* qtalk_submit_dashicon.png */; };
 		82EF65501B7BC82500999EE8 /* qtalk_talk_dashicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82EF65491B7BC82500999EE8 /* qtalk_talk_dashicon.png */; };
 		82EF65511B7BC82500999EE8 /* qtalk_web_dashicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82EF654A1B7BC82500999EE8 /* qtalk_web_dashicon.png */; };
+		82F004E11B8047DC006E778E /* QTalkLogo_Aug2015.png in Resources */ = {isa = PBXBuildFile; fileRef = 82F004E01B8047DC006E778E /* QTalkLogo_Aug2015.png */; };
+		82F004E41B80496B006E778E /* qtalk_back_shareicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82F004E21B80496B006E778E /* qtalk_back_shareicon.png */; };
+		82F004E51B80496B006E778E /* qtalk_share_shareicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 82F004E31B80496B006E778E /* qtalk_share_shareicon.png */; };
 		82F097AF1B7A68BE007DD048 /* TutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 82F097AE1B7A68BE007DD048 /* TutorialViewController.m */; };
 		82F1ED271B7E5CB700EB7D69 /* NSString+Score.m in Sources */ = {isa = PBXBuildFile; fileRef = 82F1ED261B7E5CB700EB7D69 /* NSString+Score.m */; };
 		FDA3E3EE1AF147D70066CE1C /* AKDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = FDA3E3ED1AF147D70066CE1C /* AKDefault.m */; };
@@ -273,6 +277,8 @@
 		6BE8C1521A9DA1C00026D964 /* Overlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Overlay.m; sourceTree = "<group>"; };
 		82E80B261B798D0A005909E0 /* QTStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTStyle.h; sourceTree = "<group>"; };
 		82E80B271B798D0A005909E0 /* QTStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QTStyle.m; sourceTree = "<group>"; };
+		82EAA9CE1B82AA8500746085 /* OproAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OproAPIClient.h; sourceTree = "<group>"; };
+		82EAA9CF1B82AA8500746085 /* OproAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OproAPIClient.m; sourceTree = "<group>"; };
 		82ECCE431B7BCFB5009B382F /* QuickbooksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickbooksViewController.h; sourceTree = "<group>"; };
 		82ECCE441B7BCFB5009B382F /* QuickbooksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickbooksViewController.m; sourceTree = "<group>"; };
 		82ECCE461B7BE1D4009B382F /* Nuance_White.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Nuance_White.png; sourceTree = "<group>"; };
@@ -283,6 +289,9 @@
 		82EF65481B7BC82500999EE8 /* qtalk_submit_dashicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qtalk_submit_dashicon.png; sourceTree = "<group>"; };
 		82EF65491B7BC82500999EE8 /* qtalk_talk_dashicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qtalk_talk_dashicon.png; sourceTree = "<group>"; };
 		82EF654A1B7BC82500999EE8 /* qtalk_web_dashicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qtalk_web_dashicon.png; sourceTree = "<group>"; };
+		82F004E01B8047DC006E778E /* QTalkLogo_Aug2015.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = QTalkLogo_Aug2015.png; sourceTree = "<group>"; };
+		82F004E21B80496B006E778E /* qtalk_back_shareicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qtalk_back_shareicon.png; sourceTree = "<group>"; };
+		82F004E31B80496B006E778E /* qtalk_share_shareicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qtalk_share_shareicon.png; sourceTree = "<group>"; };
 		82F097AD1B7A68BE007DD048 /* TutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialViewController.h; sourceTree = "<group>"; };
 		82F097AE1B7A68BE007DD048 /* TutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TutorialViewController.m; sourceTree = "<group>"; };
 		82F1ED251B7E5CB700EB7D69 /* NSString+Score.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Score.h"; sourceTree = "<group>"; };
@@ -389,6 +398,9 @@
 		374DF7FE1A4FCEC000C343F5 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				82F004E21B80496B006E778E /* qtalk_back_shareicon.png */,
+				82F004E31B80496B006E778E /* qtalk_share_shareicon.png */,
+				82F004E01B8047DC006E778E /* QTalkLogo_Aug2015.png */,
 				82F1ED251B7E5CB700EB7D69 /* NSString+Score.h */,
 				82F1ED261B7E5CB700EB7D69 /* NSString+Score.m */,
 				82ECCE461B7BE1D4009B382F /* Nuance_White.png */,
@@ -590,6 +602,8 @@
 		FDAAC9801AEE0695002B5587 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				82EAA9CE1B82AA8500746085 /* OproAPIClient.h */,
+				82EAA9CF1B82AA8500746085 /* OproAPIClient.m */,
 				82E80B261B798D0A005909E0 /* QTStyle.h */,
 				82E80B271B798D0A005909E0 /* QTStyle.m */,
 				FDA3E3EC1AF147D70066CE1C /* AKDefault.h */,
@@ -689,6 +703,7 @@
 				5AEAA1651AF472750033664F /* welcomeSlide2.xib in Resources */,
 				5AE8F8341AEF5B4B0032F497 /* Password.jpg in Resources */,
 				5AEAA1631AF46F9E0033664F /* welcomeSlide1.xib in Resources */,
+				82F004E11B8047DC006E778E /* QTalkLogo_Aug2015.png in Resources */,
 				5AE8F8361AEF60A30032F497 /* User.jpg in Resources */,
 				5A57DA131B2B428300217614 /* RecordAudio.xib in Resources */,
 				5AEAA1691AF48FF00033664F /* welcomeSlide4.xib in Resources */,
@@ -725,8 +740,10 @@
 				5A2908501B5DF19000889906 /* right_arrow.png in Resources */,
 				5AD1C2781AF9311F00B59C3A /* userWelcome.png in Resources */,
 				82EF654C1B7BC82500999EE8 /* qtalk_phone_dashicon.png in Resources */,
+				82F004E41B80496B006E778E /* qtalk_back_shareicon.png in Resources */,
 				82EF65511B7BC82500999EE8 /* qtalk_web_dashicon.png in Resources */,
 				6BE8C1501A9DA13B0026D964 /* Overlay.xib in Resources */,
+				82F004E51B80496B006E778E /* qtalk_share_shareicon.png in Resources */,
 				372AE5851A5309F20035101A /* 4.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -746,6 +763,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82F1ED271B7E5CB700EB7D69 /* NSString+Score.m in Sources */,
+				82EAA9D01B82AA8500746085 /* OproAPIClient.m in Sources */,
 				5ADB2EEE1B29017900F37536 /* PulsingHaloLayer.m in Sources */,
 				5A0065AC1B3B71F700E307CC /* HTAutocompleteTextField.m in Sources */,
 				3757DEF51A594FFD00EFFC36 /* AFHTTPRequestOperation.m in Sources */,

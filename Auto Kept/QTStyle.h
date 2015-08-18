@@ -16,7 +16,8 @@
 
 -(void) blueBorder:(CALayer*)layer;
 -(void) whiteBorder:(CALayer*)layer;
--(void) greyBorder:(CALayer*)layer;
+-(void) roundBorder:(CALayer*)layer;
+-(void) roundBorderSmall:(CALayer*)layer;
 -(void) textBox:(CALayer*)layer;
 -(void) blueBackground:(CALayer*)layer;
 -(void) transparentTextBox:(CALayer*)layer;

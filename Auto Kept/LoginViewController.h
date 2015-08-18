@@ -12,6 +12,15 @@
 #import "HomeViewController.h"
 #import "TutorialViewController.h"
 
+@class LoginViewController;
+
+@protocol LoginViewControllerDelegate <NSObject>
+- (void)LoginViewControllerDidAuthenticate:(LoginViewController *)viewController;
+@end
+
 @interface LoginViewController : UIViewController  <UITextFieldDelegate>
+
+@property (nonatomic, weak) id <LoginViewControllerDelegate> delegate;
+
 
 @end

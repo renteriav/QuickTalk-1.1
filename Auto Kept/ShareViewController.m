@@ -27,12 +27,8 @@
     
     QTStyle *style = [[QTStyle alloc]init];
     
-    CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
-    
-    [self.view.layer insertSublayer:gradient atIndex:0];
-    
-    [style textBox:(CALayer *) self.txtnumber.layer];
-    [style whiteBorder:(CALayer *) self.btnshare.layer];
+    [style roundBorderSmall:(CALayer *) self.txtnumber.layer];
+    [style roundBorder:(CALayer *) self.btnshare.layer];
     
     // Do any additional setup after loading the view.
     [self.txtnumber setKeyboardType:UIKeyboardTypePhonePad];

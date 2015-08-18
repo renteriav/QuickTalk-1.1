@@ -31,8 +31,12 @@
     layer.cornerRadius = 10;
 }
 
--(void) greyBorder:(CALayer *)layer{
+-(void) roundBorder:(CALayer *)layer{
     layer.cornerRadius = 10;
+}
+
+-(void) roundBorderSmall:(CALayer *)layer{
+    layer.cornerRadius = 3;
 }
 
 -(void) blueBorder:(CALayer*)layer{

@@ -9,6 +9,7 @@
 //
 
 #import "LoginViewController.h"
+#import "OproAPIClient.h"
 #import "SVProgressHUD.h"
 #import "QTStyle.h"
 #import <QuartzCore/QuartzCore.h>
@@ -17,8 +18,9 @@
 #import "HTAutocompleteTextField.h"
 
 @interface LoginViewController () <UITextFieldDelegate,UIScrollViewDelegate>
-@property (nonatomic, weak) IBOutlet UITextField *txtemail;
-@property (nonatomic, weak) IBOutlet UITextField *txtpasswd;
+- (void)authenticate;
+@property (nonatomic, weak) IBOutlet UITextField *usernameTextfield;
+@property (nonatomic, weak) IBOutlet UITextField *passwordTextfield;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
 @property (weak, nonatomic) IBOutlet UIButton *signupButton;
 @property (weak, nonatomic) IBOutlet UIButton *RecoverButton;
@@ -42,7 +44,7 @@
     }
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"username"])
     {
-        self.txtemail.text = [[NSUserDefaults standardUserDefaults]
+        self.usernameTextfield.text = [[NSUserDefaults standardUserDefaults]
                               stringForKey:@"username"];
     }
 
@@ -57,25 +59,19 @@
     self.oldPhone = false;
     }
 #pragma Set the styles using QTStyle Helper
-    
-    
-    // gradient background
+
     QTStyle *style = [[QTStyle alloc]init];
-    
-    CAGradientLayer *gradient = [style blueGradient:(UIView*)self.view];
-    
-    [self.view.layer insertSublayer:gradient atIndex:0];
     
     // borders
     
     [style whiteBorder:(CALayer*)self.loginButton.layer];
-    [style textBox:(CALayer*)self.txtemail.layer];
-    [style textBox:(CALayer*)self.txtpasswd.layer];
+    [style textBox:(CALayer*)self.usernameTextfield.layer];
+    [style textBox:(CALayer*)self.passwordTextfield.layer];
     
-    [self.txtemail setKeyboardType:UIKeyboardTypeEmailAddress];
-    self.txtpasswd.secureTextEntry = YES;
-    self.txtemail.delegate = self;
-    self.txtpasswd.delegate = self;
+    [self.usernameTextfield setKeyboardType:UIKeyboardTypeEmailAddress];
+    self.passwordTextfield.secureTextEntry = YES;
+    self.usernameTextfield.delegate = self;
+    self.passwordTextfield.delegate = self;
     // Hide Navigation
     
     self.navigationController.navigationBarHidden = TRUE;
@@ -85,8 +81,8 @@
     if(TARGET_IPHONE_SIMULATOR)
     {
         
-        self.txtemail.text = @"";
-        self.txtpasswd.text = @"";
+        self.usernameTextfield.text = @"";
+        self.passwordTextfield.text = @"";
 
 
     }
@@ -104,8 +100,8 @@
 
 -(void) dealloc
 {
-    self.txtemail = nil;
-    self.txtpasswd = nil;
+    self.usernameTextfield = nil;
+    self.passwordTextfield = nil;
 }
 
 
@@ -116,10 +112,10 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
-    if(textField == self.txtemail){
+    if(textField == self.usernameTextfield){
         [textField resignFirstResponder];
-        [self.txtpasswd becomeFirstResponder];
-    }else if(textField == self.txtpasswd){
+        [self.passwordTextfield becomeFirstResponder];
+    }else if(textField == self.passwordTextfield){
         [textField resignFirstResponder];
         [self SignInClicked:self];
         
@@ -171,120 +167,40 @@
 
 -(IBAction) SignInClicked:(id)sender
 {
-    
-    self.txtemail.text = [self.txtemail.text lowercaseString];
-    self.txtemail.text = [self.txtemail.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    self.txtpasswd.text = [self.txtpasswd.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-
-    
-    if(self.txtemail.text.length == 0 || self.txtpasswd.text.length == 0)
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please enter Email and Password" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
-        alert = nil;
-        return;
-    }
-
-
-    NSString *str = [NSString stringWithFormat:@"username=%@&password=%@",self.txtemail.text,self.txtpasswd.text];
-
-    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
-
-
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@users/log_in",baseurl]];
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    [request setHTTPMethod:@"POST"];
-    [request setHTTPBody:data];
-    data= nil;
     [SVProgressHUD show];
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-    {
-        if(error == nil)
-        {
-            NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSRange range = [string rangeOfString:@"{"];
-            if(range.length > 0)
-            {
-                NSMutableDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-                NSLog(@"== success = %d ", [result[@"success"] intValue]);
-                if([result[@"success"] intValue] == 1)
-                {   
-                    [[NSUserDefaults standardUserDefaults] setObject:self.txtemail.text forKey:@"username"];
-                    
-                    [[NSUserDefaults standardUserDefaults] setObject:result[@"guid"] forKey:@"user_guid"];
-                    
-                   //functions to get the api to show the right page
-                    
-                    NSLog(@"%@",[result description]);
-                    AKDefault *defaults = [[AKDefault alloc]init];
-                    
-                    [defaults setRedirectPageSettings:result];
-                    [defaults getRedirectPageSettings];
-                    
-                    
-                    
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-                    
-                    
-                    //Debuging only
-                    NSLog(@"%@", [[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
-                    
-                    //Now we use the methods from AKDefult class to perform segues
+    
+    [self authenticate];
+    
+}
 
-                    /*
-                    if (defaults.showPersonalInfoForm == 1) {
-                        [self performSegueWithIdentifier:@"SeguetoPersonalInfo" sender:nil];
-                        [SVProgressHUD dismiss];
-                    }
-                    else if (defaults.hidePermissionPage == 1)
-                    {
-                        if(defaults.hideTutorialPage == 1)
-                         {
-                         
-                             HomeViewController *homeView = [self.storyboard instantiateViewControllerWithIdentifier:@"homeView"];
-                             self.login = YES;
-                             homeView.login = self.login;
-                             [self.navigationController pushViewController:homeView animated:YES];
-                             
-                             [SVProgressHUD dismiss];
-                             NSLog(@"Home page view accessed");
-                         }
-                         else{
-                             TutorialViewController *tutorialPage = [self.storyboard instantiateViewControllerWithIdentifier:@"tutorialPage"];
-                             [self.navigationController pushViewController:tutorialPage animated:YES];
-                             [SVProgressHUD dismiss];
-                             NSLog(@"Silder View Accessed");
-                         }
-                    }
-                    else
-                    {
-                        AgreeToAccessViewController *accessPage = [self.storyboard instantiateViewControllerWithIdentifier:@"accessPage"];
-                    [self.navigationController pushViewController:accessPage animated:YES];
-                    [SVProgressHUD dismiss];
-                        
-                    }
-                     */
-                }
+#pragma mark - Private
 
-                else
-                {
-                    [SVProgressHUD showErrorWithStatus:result[@"message"]];
-                }
-            }
-            else
-            {
-                [SVProgressHUD showErrorWithStatus:@"Something went wrong!"];
-            }
-           
-        }
-        else
-        {
-            [SVProgressHUD showErrorWithStatus:@"We can't connect to the server. Please try later."];
-            NSLog(@"Nothing Done");
-        }
-    }];
-  
+- (void)authenticate
+{
+    NSLog(@"== Authenticating username and password from server");
+    
+    NSString *username = [[self usernameTextfield] text];
+    NSString *password = [[self passwordTextfield] text];
+    
+    [[OproAPIClient sharedClient] authenticateUsingOAuthWithUsername:username
+                                                            password:password
+                                                             success:^(NSString *accessToken, NSString *refreshToken, NSString *expiresIn) {
+                                                                 NSLog(@"== Access Token: %@ Expires in: %@", accessToken, expiresIn);
+                                                                 
+                                                                 [[self delegate] LoginViewControllerDidAuthenticate:self];
+                                                                 [self performSegueWithIdentifier:@"loginToQbAuthorize" sender:self];
+                                                                 [SVProgressHUD dismiss];
+                                                             } failure:^(NSError *error) {
+                                                                 [SVProgressHUD dismiss];
+                                                                 NSLog(@"== Auth failure: %@", [error localizedDescription]);
+                                                                 UIAlertView *alert = [[UIAlertView alloc]initWithTitle: @"Sorry"
+                                                                                                                message: [error localizedDescription]
+                                                                                                               delegate: self
+                                                                                                      cancelButtonTitle:@"OK"
+                                                                                                      otherButtonTitles: nil];
+                                                                 
+                                                                 [alert show];
+                                                             }];
 }
 
 @end

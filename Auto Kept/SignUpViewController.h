@@ -9,7 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
 
+@class SignUpViewController;
+
+@protocol SignUpViewControllerDelegate <NSObject>
+- (void)LoginViewControllerDidAuthenticate:(SignUpViewController *)viewController;
+@end
+
 @interface SignUpViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIScrollView *RegistrationView;
+@property (nonatomic, weak) id <SignUpViewControllerDelegate> delegate;
 
 @end

@@ -7,8 +7,9 @@
 //
 
 #import "QuickbooksViewController.h"
+#import "LoginViewController.h"
 
-@interface QuickbooksViewController ()<UIWebViewDelegate>
+@interface QuickbooksViewController ()<UIWebViewDelegate, LoginViewControllerDelegate>
 
 @end
 
@@ -18,14 +19,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSString *fullURL = @"https://still-beyond-6524.herokuapp.com/quickbooks";
-    //NSString *fullURL = @"http://localhost:3000/quickbooks";
+    //NSString *fullURL = @"https://still-beyond-6524.herokuapp.com/quickbooks";
+    NSString *fullURL = @"http://localhost:3000/quickbooks";
     NSURL *url = [NSURL URLWithString:fullURL];
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
     [QuickbooksWebView loadRequest:requestObj];
     QuickbooksWebView.delegate = self;
     [self QuickbooksWebView].scalesPageToFit = YES;
     
+}
+
+#pragma mark - OproDemoViewControllerDelegate;
+
+////////////////////////////////////////////////////////////////////////
+- (void)LoginViewControllerDidAuthenticate:(LoginViewController *)viewController
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+    //[self getCurrentUser];
 }
 
 - (void)viewDidLayoutSubviews {
