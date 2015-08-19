@@ -55,7 +55,7 @@
     [self.daview drawTouchCircle:value];
 }
 
-- (void) switchto:(NSString *)totalamount: (NSString *)paymentMethod{
+- (void) switchto:(NSString *)totalamount method:(NSString *)paymentMethod{
     if(totalamount == nil){
         self.valview.amount.text = @"Amount: N/A ";
     }else{

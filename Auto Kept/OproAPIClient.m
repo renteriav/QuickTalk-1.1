@@ -102,7 +102,7 @@
         [[NSUserDefaults standardUserDefaults] setObject:accessToken forKey:@"AccessToken"];
         [[NSUserDefaults standardUserDefaults] setObject:refreshToken forKey:@"RefreshToken"];
 
-        [self.requestSerializer setValue:accessToken forHTTPHeaderField:@"Authorization"];
+        [[self requestSerializer] setValue:[NSString stringWithFormat:@"token %@",accessToken] forHTTPHeaderField:@"Authorization"];
     }
 }
 

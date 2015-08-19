@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8166.2" systemVersion="14E46" minimumToolsVersion="Xcode 4.3">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14F6a" minimumToolsVersion="Xcode 4.3">
+    <entity name="CategoryStorage" syncable="YES">
+        <attribute name="category" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="categoryID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="LocalCard" syncable="YES">
         <attribute name="card" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="cardNumber" optional="YES" attributeType="String" syncable="YES"/>
@@ -18,12 +22,23 @@
         <attribute name="logo" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="profile" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
+    <entity name="PayeeStorage" syncable="YES">
+        <attribute name="payee" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="payeeID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="TypeStorage" syncable="YES">
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="typeID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <fetchRequest name="LocalValues" entity="LocalSaves" predicateString="TRUEPREDICATE"/>
     <elements>
         <element name="LocalCard" positionX="-999" positionY="-18" width="128" height="73"/>
         <element name="LocalIncome" positionX="-999" positionY="63" width="128" height="60"/>
         <element name="LocalSaves" positionX="-639" positionY="-18" width="135" height="73"/>
         <element name="LocalSources" positionX="-819" positionY="63" width="128" height="60"/>
-        <element name="LogoStorage" positionX="-819" positionY="-19" width="128" height="73"/>
+        <element name="LogoStorage" positionX="-821" positionY="-36" width="128" height="73"/>
+        <element name="CategoryStorage" positionX="-659" positionY="72" width="128" height="73"/>
+        <element name="PayeeStorage" positionX="-749" positionY="180" width="128" height="73"/>
+        <element name="TypeStorage" positionX="-965" positionY="189" width="128" height="73"/>
     </elements>
 </model>

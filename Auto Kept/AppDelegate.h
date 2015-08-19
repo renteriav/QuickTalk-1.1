@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
-#define baseurl @"http://localhost:3000/"
+#define baseurl @"http://localhost:3000/quickbooks"
 //#define baseurl @"https://autokept.herokuapp.com/api/v1/"
 //#define baseurl @"https://aqueous-everglades-9684.herokuapp.com/api/v1/"
 
 //#define baseurl @"https://still-beyond-6524.herokuapp.com/api/v1/" //Current Test Server
 //#define baseurl @"https://still-beyond-6524.herokuapp.com/quickbooks/"
+//#define baseurl @"http://10.0.0.63:3000/quickbooks"
 @interface AppDelegate : UIResponder <UIApplicationDelegate>{
 
 NSManagedObjectModel *managedObjectModel;
@@ -34,7 +35,7 @@ NSPersistentStoreCoordinator *persistentStoreCoordinator;
 - (NSArray *) oldSaves;
 - (NSUInteger)getCoresize;
 - (void)deleteOldCore:(NSManagedObject *)objecttodelete;
-- (void)saveCompanyLogo:(NSData *)datatoSaveLogo:(NSString *)imagename;
+- (void)saveCompanyLogo:(NSData *)datatoSaveLogo :(NSString *)imagename;
 - (NSManagedObject *)getCompanyInfo:(NSString *)imagename;
 - (void)deleteCompanyInfo;
 - (void)wipeCore;
@@ -44,8 +45,14 @@ NSPersistentStoreCoordinator *persistentStoreCoordinator;
 - (void)SaveSource:(NSString *)sourceToSave;
 - (NSArray *)LoadSource;
 - (void)wipeSources;
--(void)setIncomeMethod:(NSString *)incomeMethod;
--(NSArray *)getIncomeMethods;
+- (void)setIncomeMethod:(NSString *)incomeMethod;
+- (NSArray *)getIncomeMethods;
 - (void)wipeMethodSources;
+
+//QuickTalk Core Data Methods
+- (NSDictionary *)CategoriesStorage:(NSDictionary *)categoriesFromServer :(int)type;
+- (NSDictionary *)TypeStorage:(NSDictionary *)paymentTypesFromServer :(int)type;
+- (NSDictionary *)PayeeStorage:(NSDictionary *)payeesFromServer :(int)type;
+
 @end
 

@@ -14,5 +14,5 @@
 
 
 - (void) activate:(CGFloat *)value;
-- (void) switchto:(NSString *)totalamount:(NSString *)paymentMethod;
+- (void) switchto:(NSString *)totalamount method:(NSString *)paymentMethod;
 @end

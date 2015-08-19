@@ -58,7 +58,6 @@
 		37AC420C1A5AFB1600E2B7F3 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AC420B1A5AFB1600E2B7F3 /* NSString+URLEncoding.m */; };
 		37AD28A01A768EB200FF06B7 /* Voice Screen.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 37AD289F1A768EB200FF06B7 /* Voice Screen.mp4 */; };
 		37FD2F8B1A6BCB4400B334EE /* commonunit.m in Sources */ = {isa = PBXBuildFile; fileRef = 37FD2F8A1A6BCB4400B334EE /* commonunit.m */; };
-		5A0065A91B38B04D00E307CC /* LocalPictures.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5A0065A61B38B04D00E307CC /* LocalPictures.xcdatamodeld */; };
 		5A0065AC1B3B71F700E307CC /* HTAutocompleteTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A0065AB1B3B71F700E307CC /* HTAutocompleteTextField.m */; };
 		5A0065B01B3B729B00E307CC /* HTAutocompleteManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A0065AF1B3B729B00E307CC /* HTAutocompleteManager.m */; };
 		5A0CCDB61B58BE8D001F06D7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A0CCDB51B58BE8D001F06D7 /* QuartzCore.framework */; };
@@ -102,6 +101,7 @@
 		6BE8C14E1A9DA0C40026D964 /* play@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BE8C14D1A9DA0C40026D964 /* play@2x.png */; };
 		6BE8C1501A9DA13B0026D964 /* Overlay.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BE8C14F1A9DA13B0026D964 /* Overlay.xib */; };
 		6BE8C1531A9DA1C00026D964 /* Overlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE8C1521A9DA1C00026D964 /* Overlay.m */; };
+		82E7CF3B1B84F94900DEEC50 /* LocalPictures.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 82E7CF371B84F94900DEEC50 /* LocalPictures.xcdatamodeld */; };
 		82E80B281B798D0A005909E0 /* QTStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 82E80B271B798D0A005909E0 /* QTStyle.m */; };
 		82EAA9D01B82AA8500746085 /* OproAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 82EAA9CF1B82AA8500746085 /* OproAPIClient.m */; };
 		82ECCE451B7BCFB5009B382F /* QuickbooksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 82ECCE441B7BCFB5009B382F /* QuickbooksViewController.m */; };
@@ -216,13 +216,10 @@
 		37AD289F1A768EB200FF06B7 /* Voice Screen.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Voice Screen.mp4"; sourceTree = "<group>"; };
 		37FD2F891A6BCB4400B334EE /* commonunit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commonunit.h; sourceTree = "<group>"; };
 		37FD2F8A1A6BCB4400B334EE /* commonunit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = commonunit.m; sourceTree = "<group>"; };
-		5A0065A71B38B04D00E307CC /* LocalPictures 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "LocalPictures 2.xcdatamodel"; sourceTree = "<group>"; };
-		5A0065A81B38B04D00E307CC /* LocalPictures.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LocalPictures.xcdatamodel; sourceTree = "<group>"; };
 		5A0065AA1B3B71F700E307CC /* HTAutocompleteTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTAutocompleteTextField.h; sourceTree = "<group>"; };
 		5A0065AB1B3B71F700E307CC /* HTAutocompleteTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTAutocompleteTextField.m; sourceTree = "<group>"; };
 		5A0065AE1B3B729B00E307CC /* HTAutocompleteManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTAutocompleteManager.h; sourceTree = "<group>"; };
 		5A0065AF1B3B729B00E307CC /* HTAutocompleteManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HTAutocompleteManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5A0065B11B3CAE1C00E307CC /* LocalPictures 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "LocalPictures 3.xcdatamodel"; sourceTree = "<group>"; };
 		5A0CCDB51B58BE8D001F06D7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5A0FAC4A1B1E5A41008E9B89 /* signouticon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = signouticon.png; sourceTree = "<group>"; };
 		5A0FAC4C1B1F6FEC008E9B89 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -275,6 +272,9 @@
 		6BE8C14F1A9DA13B0026D964 /* Overlay.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Overlay.xib; sourceTree = "<group>"; };
 		6BE8C1511A9DA1C00026D964 /* Overlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Overlay.h; sourceTree = "<group>"; };
 		6BE8C1521A9DA1C00026D964 /* Overlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Overlay.m; sourceTree = "<group>"; };
+		82E7CF381B84F94900DEEC50 /* LocalPictures 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "LocalPictures 2.xcdatamodel"; sourceTree = "<group>"; };
+		82E7CF391B84F94900DEEC50 /* LocalPictures 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "LocalPictures 3.xcdatamodel"; sourceTree = "<group>"; };
+		82E7CF3A1B84F94900DEEC50 /* LocalPictures.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LocalPictures.xcdatamodel; sourceTree = "<group>"; };
 		82E80B261B798D0A005909E0 /* QTStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTStyle.h; sourceTree = "<group>"; };
 		82E80B271B798D0A005909E0 /* QTStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QTStyle.m; sourceTree = "<group>"; };
 		82EAA9CE1B82AA8500746085 /* OproAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OproAPIClient.h; sourceTree = "<group>"; };
@@ -364,10 +364,10 @@
 				37A1E8681A4FE72000B81226 /* Frameworks */,
 				374DF8031A4FCEC000C343F5 /* AppDelegate.m */,
 				374DF8021A4FCEC000C343F5 /* AppDelegate.h */,
+				82E7CF371B84F94900DEEC50 /* LocalPictures.xcdatamodeld */,
 				37A1E87B1A4FE98F00B81226 /* UIImage+Resize.h */,
 				82ECCE441B7BCFB5009B382F /* QuickbooksViewController.m */,
 				82ECCE431B7BCFB5009B382F /* QuickbooksViewController.h */,
-				5A0065A61B38B04D00E307CC /* LocalPictures.xcdatamodeld */,
 				374DF80B1A4FCEC000C343F5 /* Main.storyboard */,
 				5A9DBFAC1B2113610045EAC9 /* logo1000x219web.png */,
 				5A31752E1AF02AC10097617E /* PersonalInfoFormViewController.h */,
@@ -780,6 +780,7 @@
 				374DF8011A4FCEC000C343F5 /* main.m in Sources */,
 				5A29084D1B5DF19000889906 /* CKCalendarView.m in Sources */,
 				3757DEDE1A594FF800EFFC36 /* UIProgressView+AFNetworking.m in Sources */,
+				82E7CF3B1B84F94900DEEC50 /* LocalPictures.xcdatamodeld in Sources */,
 				3757DEF71A594FFD00EFFC36 /* AFHTTPSessionManager.m in Sources */,
 				5A57DA121B2B428300217614 /* RecordAudio.m in Sources */,
 				3757DEDA1A594FF800EFFC36 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
@@ -795,7 +796,6 @@
 				5A6071321AEEFC550007B549 /* SignUpViewController.m in Sources */,
 				3757DEE01A594FF800EFFC36 /* UIWebView+AFNetworking.m in Sources */,
 				37AC420C1A5AFB1600E2B7F3 /* NSString+URLEncoding.m in Sources */,
-				5A0065A91B38B04D00E307CC /* LocalPictures.xcdatamodeld in Sources */,
 				3757DEFB1A594FFD00EFFC36 /* AFURLRequestSerialization.m in Sources */,
 				82ECCE451B7BCFB5009B382F /* QuickbooksViewController.m in Sources */,
 				375100841A526FCB006E9FCC /* ShareViewController.m in Sources */,
@@ -1047,14 +1047,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		5A0065A61B38B04D00E307CC /* LocalPictures.xcdatamodeld */ = {
+		82E7CF371B84F94900DEEC50 /* LocalPictures.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				5A0065B11B3CAE1C00E307CC /* LocalPictures 3.xcdatamodel */,
-				5A0065A71B38B04D00E307CC /* LocalPictures 2.xcdatamodel */,
-				5A0065A81B38B04D00E307CC /* LocalPictures.xcdatamodel */,
+				82E7CF381B84F94900DEEC50 /* LocalPictures 2.xcdatamodel */,
+				82E7CF391B84F94900DEEC50 /* LocalPictures 3.xcdatamodel */,
+				82E7CF3A1B84F94900DEEC50 /* LocalPictures.xcdatamodel */,
 			);
-			currentVersion = 5A0065B11B3CAE1C00E307CC /* LocalPictures 3.xcdatamodel */;
+			currentVersion = 82E7CF391B84F94900DEEC50 /* LocalPictures 3.xcdatamodel */;
 			path = LocalPictures.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

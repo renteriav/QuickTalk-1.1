@@ -22,7 +22,7 @@
 #import "CKCalendarView.h"
 #import "NSString+Score.h"
 #import "AFNetworking.h"
-
+#import "OproAPIClient.h"
 
 #define imagesize CGSizeMake(960, 960)
 #define headerImage @"header.png"
@@ -33,7 +33,7 @@
 const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0x3e, 0x5b, 0x3c, 0xe3, 0x9a, 0xc6, 0x3d, 0x3b, 0x30, 0x55, 0x6d, 0x83, 0xa0, 0x38, 0x80, 0x40, 0x36, 0x2b, 0x80, 0x97, 0x26, 0xeb, 0x88, 0x8f, 0x8b, 0x4e, 0xff, 0x7c, 0xfa, 0xda, 0xd5, 0x39, 0x35, 0x11, 0x1c, 0xcf, 0xd8, 0x59, 0x0a, 0x08, 0xae, 0x77, 0x8b, 0x4e, 0xb0, 0x0b, 0x8f, 0xe6, 0x37, 0x0f, 0x7d, 0x5d, 0xfa, 0x06, 0xec, 0x85, 0x54, 0xeb, 0x02};
 
 
-@interface HomeViewController () <CKCalendarDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITextViewDelegate,UIAlertViewDelegate,UITextFieldDelegate,UIPickerViewDataSource,UIPickerViewDelegate>//MFMailComposeViewControllerDelegate
+@interface HomeViewController () <CKCalendarDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITextViewDelegate,UIAlertViewDelegate,UITextFieldDelegate,UIPickerViewDataSource,UIPickerViewDelegate>//MFMailComposeViewControllerDelegate
 {
     UIImagePickerController *imagePicker;
 }
@@ -82,6 +82,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 @property (nonatomic) NSDictionary *categoryDictionary;
 @property (nonatomic) NSDictionary *methodDictionary;
 @property (nonatomic) NSDictionary *payeeDictionary;
+@property(nonatomic, strong) id savedResponseObject;
 @property (nonatomic) BOOL Mileage;
 @property (nonatomic) BOOL lockSubmit;
 @property (nonatomic) BOOL Income;
@@ -94,8 +95,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 @property (nonatomic) NSArray *dayValues;
 @property (nonatomic) UIToolbar *calendarbar;
 @property (nonatomic) NSString *accessToken;
-
-
+@property NSString *imagePath;
 
 @end
 
@@ -136,7 +136,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     self.descriptiontext = @"";
     self.firstTime = true;
     
-    [self loadData];
+    //[self loadData];
     
     // NSLog(@"\n new dic%@",[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]);
     
@@ -245,9 +245,10 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     [self checkforpastuploads];
     [SVProgressHUD dismiss];
     
-    [self getpaymentMethods];
-    [self getExpenseCategories];
     [self getPayees];
+    [self getExpenseCategories];
+    [self getpaymentMethods];
+    
     
     
     self.dateValues = @[@[@"01",@"02",@"03",@"04",@"05",@"06",@"07",@"08",@"09",@"10",@"11",@"12",@""],
@@ -291,41 +292,56 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 #pragma get expense categories and payment methods
 
 - (void)getPayees{
-    
-    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@vendors?realm_id=%@", baseurl, realm_id]];
+
+    AppDelegate *appDelegateShared = [[UIApplication sharedApplication] delegate];
+    NSString *accessToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"AccessToken"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/vendors", baseurl]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     
     [request setHTTPMethod:@"GET"];
+    [request addValue:[NSString stringWithFormat:@"token %@",accessToken] forHTTPHeaderField:@"Authorization"];
     NSURLResponse * response = nil;
     NSError * error = nil;
     [SVProgressHUD show];
     NSData *data = [NSURLConnection sendSynchronousRequest:request
                                          returningResponse:&response
                                                      error:&error];
+    //if there is an error load off of the core data
+    if(error){
+        NSLog(@"Error when retrieving Payees \n Error:%@",[error description]);
+        self.payeeDictionary = [appDelegateShared PayeeStorage:nil :1];
+        NSMutableArray *allKeys = [[[appDelegateShared PayeeStorage:nil :1] allKeys] mutableCopy];
+        self.payeeNames = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
+    }else{
+        
     NSMutableDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    
     NSLog(@"%@", result);
-    
+        [appDelegateShared PayeeStorage:nil :2];
+        [appDelegateShared PayeeStorage:result :0];
+
     NSMutableArray *allKeys = [[result allKeys] mutableCopy];
-    
     self.payeeDictionary = result;
     self.payeeNames = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    NSLog(@"%@", self.payeeNames);
+    }
+    NSLog(@"------------------------%@", self.payeeNames);
+    NSLog(@"result = %@", self.savedResponseObject);
     [SVProgressHUD dismiss];
     
 }
 
+
 - (void)getExpenseCategories{
-    
-    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@expense_categories?realm_id=%@", baseurl, realm_id]];
+    AppDelegate *appDelegateShared = [[UIApplication sharedApplication] delegate];
+
+    NSString *accessToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"AccessToken"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/expense_categories", baseurl]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     
     [request setHTTPMethod:@"GET"];
+    [request addValue:[NSString stringWithFormat:@"token %@",accessToken] forHTTPHeaderField:@"Authorization"];
     NSURLResponse * response = nil;
     NSError * error = nil;
     [SVProgressHUD show];
@@ -333,41 +349,67 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
                                          returningResponse:&response
                                                      error:&error];
     
+    //Failed to Connect Pulling from core
+    if(error){
+        NSLog(@"Expense Category retrieval failed, Entering Offline mode, Pullng from Core Data for Expenese Categories\n Reason for failure:%@",[error description]);
+        self.categoryDictionary = [appDelegateShared CategoriesStorage:nil :1];
+        NSMutableArray *allKeys = [[[appDelegateShared CategoriesStorage:nil :1] allKeys] mutableCopy];
+        self.categoryTypes = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        
+    }else{
     NSMutableDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    
+   
     NSLog(@"%@", result);
     
     NSMutableArray *allKeys = [[result allKeys] mutableCopy];
-    
+   
+    [appDelegateShared CategoriesStorage:nil :2];
+    [appDelegateShared CategoriesStorage:result :0];
+
+        
     self.categoryDictionary = result;
     self.categoryTypes = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    }
     NSLog(@"%@", self.categoryTypes);
     [SVProgressHUD dismiss];
     
 }
 - (void)getpaymentMethods{
-    
-    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@bank_accounts?realm_id=%@", baseurl, realm_id]];
+     AppDelegate *appDelegateShared = [[UIApplication sharedApplication] delegate];
+    NSString *accessToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"AccessToken"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/bank_accounts", baseurl]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     
     [request setHTTPMethod:@"GET"];
+    [request addValue:[NSString stringWithFormat:@"token %@",accessToken] forHTTPHeaderField:@"Authorization"];
     NSURLResponse * response = nil;
     NSError * error = nil;
     [SVProgressHUD show];
     NSData *data = [NSURLConnection sendSynchronousRequest:request
                                          returningResponse:&response
                                                      error:&error];
+     //Failed to Connect Pulling from core
+    
+    if(error){
+        NSLog(@"There was an error retriving the methods from the server \n Reason: %@" , [error description]);
+        NSMutableArray *allKeys = [[[appDelegateShared TypeStorage:nil :1] allKeys] mutableCopy];
+        self.methodDictionary = [appDelegateShared TypeStorage:nil :1] ;
+        self.paymentTypes = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        
+    }else{
     
     NSMutableDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    
+        [appDelegateShared TypeStorage:nil :2];
+        [appDelegateShared TypeStorage:result :0];
     NSLog(@"%@", result);
     
     NSMutableArray *allKeys = [[result allKeys] mutableCopy];
     
     self.methodDictionary = result;
     self.paymentTypes = [allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+
+    }
     NSLog(@"%@", self.paymentTypes);
     [SVProgressHUD dismiss];
     
@@ -749,8 +791,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     NSString *day = [dateComponents objectAtIndex:1];
     self.dateFilled = [NSString stringWithFormat:@"%@-%@-%@", year, month, day ];
     
-    NSString *realm_id = [[NSUserDefaults standardUserDefaults] objectForKey:@"realm_id"];
-    NSString *urlString = [NSString stringWithFormat:@"%@create_purchase?realm_id=%@", baseurl, realm_id];
+    NSString *accessToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"AccessToken"];
+    NSString *urlString = [NSString stringWithFormat:@"%@/create_purchase", baseurl];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSDictionary *parameters = @{@"description": self.txtview.text,
@@ -759,6 +801,8 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
                                  @"expense_category": self.categoryId,
                                  @"payee": self.payeeId,
                                  @"date": self.dateFilled };
+    [[manager requestSerializer] setValue:[NSString stringWithFormat:@"token %@",accessToken] forHTTPHeaderField:@"Authorization"];
+    //NSURL *filePath = [NSURL fileURLWithPath:self.imagePath];
     NSURL *filePath = [NSURL fileURLWithPath:@"/Users/franciscorenteria/Pictures/christmas-music-notes-border-singing_8355-1.jpg"];
     [manager POST:urlString parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFileURL:filePath name:@"file" error:nil];
@@ -790,27 +834,16 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
         NSLog(@"Error: %@", error);
     }];
-    
-}
+
+  }
 
 -(IBAction)MinuteBookClicked:(id)sender
 {
-    //[self performSegueWithIdentifier:@"sharemodel" sender:nil];
+   
 }
 
 - (IBAction)StartButtonAction: (id)sender
 {
-    //superSiri
-    /*
-     self.recordOverlay = [[RecordAudio alloc] initWithNibName:@"RecordAudio" bundle:nil];
-     self.recordOverlay.view.frame = self.view.frame;
-     [self.view addSubview: self.recordOverlay.view];
-     [self.recordOverlay didMoveToParentViewController:self];
-     
-     [self.recordOverlay.cancelBtn addTarget:self action:@selector(cancelrecording:) forControlEvents:UIControlEventTouchUpInside];
-     [self.recordOverlay.cancel2btn addTarget:self action:@selector(cancelrecording:) forControlEvents:UIControlEventTouchUpInside];
-     */
-    
     [self.txtview resignFirstResponder];
     if (transactionState == TS_RECORDING) {
         [voiceSearch stopRecording];
@@ -996,7 +1029,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     [self performSelector:@selector(updateVUMeter) withObject:nil afterDelay:0.15];
 }
 
-#pragma mark -
+
 #pragma mark UIImagePickerController
 -(void) openCameraOrLibrary:(UIImagePickerControllerSourceType)type
 {
@@ -1025,6 +1058,13 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     dispatch_async(dispatch_get_main_queue(), ^{
         [self StartButtonAction:nil];
     });
+    self.imagePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"upload-image.jpeg"];
+    NSLog(@"%@",self.imagePath);
+    NSData *imageData = UIImageJPEGRepresentation(image,1);
+    NSUInteger s2 = UIImageJPEGRepresentation(image, 1).length;
+    NSLog(@"s2:%lu",(unsigned long)s2);
+    // you can also use UIImageJPEGRepresentation(img,1); for jpegs
+    [imageData writeToFile:self.imagePath atomically:YES];
     
 }
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
@@ -1075,7 +1115,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
 
 - (void)retryUpload:(NSManagedObject *)datatosend{
-    
+
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@submit",baseurl]];
     NSData *data = [[datatosend valueForKey:@"savedData"] dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:5];
@@ -1699,8 +1739,6 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
 
 -(void)Transaction:(NSString *)values{
     
-    //self.payeeView.autocompleteDataSource = [HTAutocompleteManager sharedManager];
-    //self.payeeView.autocompleteType = HTAutocompleteTypeComp;
     
     NSString *total;
     NSString *paymentMethod;
@@ -1715,6 +1753,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     
     
     BOOL amex = false;
+
     BOOL cardNumberFound = false;
     if (self.Mileage){
         self.methodSet = NO;
@@ -1755,7 +1794,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     BOOL valid;
     
     if (!self.amountset){
-        self.amountView.text = @"$0.0";
+        self.amountView.text = @"$0.00";
     }
     if (!self.methodSet){
         self.methodView.text = @"";
@@ -1856,6 +1895,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
             }
             
         }
+        
         
         
     }
@@ -2609,6 +2649,7 @@ const unsigned char SpeechKitApplicationKey[] = {0x70, 0xf1, 0xac, 0xdb, 0x59, 0
     [appDelegate deleteOldCore:objecttodelete];
     
 }
+
 
 - (void)cancelrecording:(id)sender{
     //Unlock for next update KEYWORD SuperSiri

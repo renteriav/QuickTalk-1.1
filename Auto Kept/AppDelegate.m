@@ -172,7 +172,175 @@
     }
 
 }
+#pragma - QuickTalk Core Data Saving and Loading
 
+
+// Saves and Loads Categories to the Core Data; type = 0 Save Categories; type = 1 Load Category; type = 2 Delete Categories
+- (NSDictionary *)CategoriesStorage:(NSDictionary *)categoriesFromServer :(int)type{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    // Saves Category's to the Core Data
+    if(type == 0){
+        NSManagedObject *categoryStorageCore;
+        NSMutableArray *categoryKeys = [[categoriesFromServer allKeys] mutableCopy];
+    
+        NSError *error;
+        for (NSString *categories in categoryKeys){
+            NSLog(@"%@",[[categoriesFromServer valueForKey:categories] stringValue]);
+            categoryStorageCore = [NSEntityDescription insertNewObjectForEntityForName:@"CategoryStorage" inManagedObjectContext:context];
+            [categoryStorageCore setValue:[[categoriesFromServer valueForKey:categories] stringValue] forKey:@"categoryID"];
+            [categoryStorageCore setValue:categories forKey:@"category"];
+            if(![context save:&error]){
+                NSLog(@"Category Core Save Failed! \n Reason: %@",[error description]);
+            }
+        }
+        return NULL;
+    //Loads or Delete Category's to the Core Data
+    }else{
+     
+        NSFetchRequest *categoryCoreFetch = [[NSFetchRequest alloc] init];
+        NSEntityDescription *categoryEntity = [NSEntityDescription entityForName:@"CategoryStorage" inManagedObjectContext:context];
+        [categoryCoreFetch setEntity:categoryEntity];
+        [categoryCoreFetch setIncludesPropertyValues:NO];
+        NSError *error;
+        NSArray *fetchedCategories = [context executeFetchRequest:categoryCoreFetch error:&error];
+        
+        
+        
+        if(type == 1){
+        NSMutableDictionary *categoryDictionary = [[NSMutableDictionary alloc] init];
+        for (NSManagedObject *categoryObject in fetchedCategories){
+            [categoryDictionary setObject:[categoryObject valueForKey:@"categoryID"] forKey:[categoryObject valueForKey:@"category"]];
+        }
+        NSDictionary *returnDictionary = [categoryDictionary copy];
+        return returnDictionary;
+           }else{
+               if(!([fetchedCategories count] == 0)){
+                   for(NSManagedObject *categoryObject in fetchedCategories){
+                       [context deleteObject:categoryObject];
+                   }
+                   
+               }
+               if (![context save:&error]){
+                   NSLog(@"Deletion of Categories in Core Data failed \n Reason:%@", error);
+               }
+           }
+    }
+    return NULL;
+    
+}
+
+- (NSDictionary *)TypeStorage:(NSDictionary *)paymentTypesFromServer :(int)type{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    // Saves Category's to the Core Data
+    if(type == 0){
+        NSManagedObject *paymentStorageCore;
+        NSMutableArray *paymentKeys = [[paymentTypesFromServer allKeys] mutableCopy];
+        
+        NSError *error;
+        for (NSString *payment in paymentKeys){
+            NSLog(@"%@",[[paymentTypesFromServer valueForKey:payment] stringValue]);
+            paymentStorageCore = [NSEntityDescription insertNewObjectForEntityForName:@"TypeStorage" inManagedObjectContext:context];
+            [paymentStorageCore setValue:[[paymentTypesFromServer valueForKey:payment] stringValue] forKey:@"TypeID"];
+            [paymentStorageCore setValue:payment forKey:@"type"];
+            if(![context save:&error]){
+                NSLog(@"Type Core Save Failed! \n Reason: %@",[error description]);
+            }
+        }
+        return NULL;
+        //Loads or Delete Category's to the Core Data
+    }else{
+        
+        NSFetchRequest *categoryCoreFetch = [[NSFetchRequest alloc] init];
+        NSEntityDescription *categoryEntity = [NSEntityDescription entityForName:@"TypeStorage" inManagedObjectContext:context];
+        [categoryCoreFetch setEntity:categoryEntity];
+        [categoryCoreFetch setIncludesPropertyValues:NO];
+        NSError *error;
+        NSArray *fetchedPayments = [context executeFetchRequest:categoryCoreFetch error:&error];
+        
+        
+        
+        if(type == 1){
+            NSMutableDictionary *paymentDictionary = [[NSMutableDictionary alloc] init];
+            for (NSManagedObject *paymentObject in fetchedPayments){
+                [paymentDictionary setObject:[paymentObject valueForKey:@"typeID"] forKey:[paymentObject valueForKey:@"type"]];
+            }
+            NSDictionary *returnDictionary = [paymentDictionary copy];
+            return returnDictionary;
+        }else{
+            if(!([fetchedPayments count] == 0)){
+                for(NSManagedObject *paymentObject in fetchedPayments){
+                    [context deleteObject:paymentObject];
+                }
+                
+            }
+            if (![context save:&error]){
+                NSLog(@"Deletion of Payment Type  in Core Data failed \n Reason:%@", error);
+            }
+        }
+    }
+
+    return NULL;
+    
+    
+}
+
+- (NSDictionary *)PayeeStorage:(NSDictionary *)payeesFromServer :(int)type{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    // Saves Payee's to the Core Data
+    if(type == 0){
+    NSManagedObject *payeeStorageCore;
+    NSMutableArray *payeeKeys = [[payeesFromServer allKeys] mutableCopy];
+    
+    NSError *error;
+    for (NSString *payee in payeeKeys){
+        NSLog(@"%@",[[payeesFromServer valueForKey:payee] stringValue]);
+        payeeStorageCore = [NSEntityDescription insertNewObjectForEntityForName:@"PayeeStorage" inManagedObjectContext:context];
+        [payeeStorageCore setValue:[[payeesFromServer valueForKey:payee] stringValue] forKey:@"payeeID"];
+        [payeeStorageCore setValue:payee forKey:@"payee"];
+        if(![context save:&error]){
+            NSLog(@"Payee Core Save Failed! \n Reason: %@",[error description]);
+        }
+    }
+    return NULL;
+    //Loads or Delete Payee's to the Core Data
+}else{
+    NSFetchRequest *payeeCoreFetch = [[NSFetchRequest alloc] init];
+    NSEntityDescription *payeeEntity = [NSEntityDescription entityForName:@"PayeeStorage" inManagedObjectContext:context];
+    [payeeCoreFetch setEntity:payeeEntity];
+    [payeeCoreFetch setIncludesPropertyValues:NO];
+    NSError *error;
+    NSArray *fetchedPayee = [context executeFetchRequest:payeeCoreFetch error:&error];
+    
+    
+    
+    if(type == 1){
+        NSMutableDictionary *payeeDictionary = [[NSMutableDictionary alloc] init];
+        for (NSManagedObject *payeeObject in fetchedPayee){
+            [payeeDictionary setObject:[payeeObject valueForKey:@"payeeID"] forKey:[payeeObject valueForKey:@"payee"]];
+        }
+        NSDictionary *returnDictionary = [payeeDictionary copy];
+        return returnDictionary;
+    }else{
+        if(!([fetchedPayee count] == 0)){
+            for(NSManagedObject *paymentObject in fetchedPayee){
+                [context deleteObject:paymentObject];
+            }
+            
+        }
+        if (![context save:&error]){
+            NSLog(@"Deletion of Payee in Core Data failed \n Reason:%@", error);
+        }
+    }
+}
+    return NULL;
+
+
+}
+
+#pragma Old Core Storage Methods
 - (NSArray *)LoadSource{
     NSManagedObjectContext *context = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -199,9 +367,6 @@
         NSLog(@"something happened %@", [error localizedDescription]);
         
     }
-
-
-    
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"LocalSaves" inManagedObjectContext:context];
@@ -370,7 +535,7 @@
 
 
 
--(void)saveCompanyLogo:(NSData *)datatoSaveLogo :(NSString *)imagename {
+-(void)saveCompanyLogo:(NSData *)datatoSaveLogo :(NSString *)imagename{
     NSManagedObjectContext *context = [self managedObjectContext];
     NSManagedObject *localSaves  = [NSEntityDescription insertNewObjectForEntityForName:@"LogoStorage" inManagedObjectContext:context];
     if([imagename isEqualToString:@"profile.png"]){

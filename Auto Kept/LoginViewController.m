@@ -35,7 +35,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.didSlide = false;
-    if([[NSUserDefaults standardUserDefaults] objectForKey:@"user_guid"])
+    if([[NSUserDefaults standardUserDefaults] objectForKey:@"AccessToken"])
     {
         
         HomeViewController *homeView = [self.storyboard instantiateViewControllerWithIdentifier:@"homeView"];
@@ -157,11 +157,6 @@
 }
 - (IBAction)PasswordFieldEditEnded:(id)sender {
     [self viewSlide];
-}
-
-- (IBAction)SignUpClicked:(id)sender {
-    //  not used yet
-
 }
 
 

@@ -19,9 +19,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //NSString *fullURL = @"https://still-beyond-6524.herokuapp.com/quickbooks";
-    NSString *fullURL = @"http://localhost:3000/quickbooks";
-    NSURL *url = [NSURL URLWithString:fullURL];
+    
+    NSString *accessToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"AccessToken"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@?access_token=%@",baseurl, accessToken]];
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
     [QuickbooksWebView loadRequest:requestObj];
     QuickbooksWebView.delegate = self;
@@ -46,35 +46,7 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     if ([request.URL.scheme isEqualToString:@"inapp"]) {
         if ([request.URL.host isEqualToString:@"capture"]) {
-            NSString *currentURL = [webView stringByEvaluatingJavaScriptFromString:@"window.location.href"];
-            NSURL *url = [NSURL URLWithString:currentURL];
-            NSString *query = url.query;
-            
-            NSMutableDictionary *queryStringDictionary = [[NSMutableDictionary alloc] init];
-            NSArray *urlComponents = [query componentsSeparatedByString:@"&"];
-            
-            for (NSString *keyValuePair in urlComponents)
-            {
-                NSArray *pairComponents = [keyValuePair componentsSeparatedByString:@"="];
-                NSString *key = [[pairComponents firstObject] stringByRemovingPercentEncoding];
-                NSString *value = [[pairComponents lastObject] stringByRemovingPercentEncoding];
-                
-                [queryStringDictionary setObject:value forKey:key];
-                
-            }
-            NSString *realm_id =[queryStringDictionary objectForKey:@"realm_id"];
-            NSString *secret =[queryStringDictionary objectForKey:@"secret"];
-            NSString *token =[queryStringDictionary objectForKey:@"token"];
-            
-            NSLog(@"realm_id = %@", realm_id);
-            NSLog(@"secret = %@", secret);
-            NSLog(@"token = %@", token);
-            
-            
-            [[NSUserDefaults standardUserDefaults] setObject:realm_id forKey:@"realm_id"];
-            
-            [[NSUserDefaults standardUserDefaults] synchronize];
-            
+                       
             [self performSegueWithIdentifier:@"AuthToTutorial" sender:nil];
             
         }
